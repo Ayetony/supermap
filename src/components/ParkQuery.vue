@@ -14,7 +14,7 @@ export default {
   name: "ParkQuery",
   data(){
     return{
-      parkShow: false
+      parkShow: true
     }
   }
 }
