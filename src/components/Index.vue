@@ -1,22 +1,31 @@
 <template>
   <div>
-    <ParkQuery :parkshow="parkShow"/>
+    <ParkQuery :page-list="markerArr" :park-show="parkShow" @deviceInfo="showDeviceInfo"
+               @deviceMarker="showDeviceMarker"/>
     <div v-show="visible" id="popup-window">
       <h2 style="color: #0868e5;float: right;height: 5px;margin-top: -30px">
         <button @click="visible = false">关闭</button>
       </h2>
       <h5 style="color: #0868e5;margin-top: -60px;padding-top: 5px;">详细信息</h5>
       <div style="margin-top: -20px">
-        <ul>
+        <ul style="margin-left: -5%">
           <li name="isCamera"><p @click="handleTitle">视频监控</p></li>
           <li name="isEquip"><p id="mid" @click="handleTitle">设备信息</p></li>
           <li name="isWarn"><p @click="handleTitle">告警信息</p></li>
         </ul>
         <br/>
-        <div v-show="showOfEquip" v-for="equip_info in markerArr" :key="equip_info.equip_uniq_num" id="content">
-          设备名称：{{ equip_info.name }}<br/>
-          设备安装区域：{{ equip_info.erectArea }}<br/>
-          设备唯一识别编码：{{ equip_info.equip_uniq_num }}<br/>
+        <div v-show="showOfEquip" id="content">
+          <p v-for="equip_info in getDeviceInfo" :key="equip_info.equip_uniq_num">
+            设备名称：{{ equip_info.name }}<br/>
+            设备安装区域：{{ equip_info.erectArea }}<br/>
+            设备唯一识别编码：{{ equip_info.equip_uniq_num }}<br/>
+            设备名称：{{ equip_info.name }}<br/>
+            设备安装区域：{{ equip_info.erectArea }}<br/>
+            设备唯一识别编码：{{ equip_info.equip_uniq_num }}<br/>
+            设备名称：{{ equip_info.name }}<br/>
+            设备安装区域：{{ equip_info.erectArea }}<br/>
+            设备唯一识别编码：{{ equip_info.equip_uniq_num }}<br/>
+          </p>
         </div>
         <div v-show="showOfWarn" id="warn">
           告警信息
@@ -42,6 +51,10 @@ export default {
   },
   data() {
     return {
+      iconColor: {
+        warnColor: '#d32828',
+        onlineColor: '#0868e5'
+      },
       parkShow: false,
       redIcon: L.icon({
         iconUrl: require('../assets/warn-red-camera.png'),//marker图片地址
@@ -50,6 +63,7 @@ export default {
       }),
       token: "pk.eyJ1IjoibWlhb2RheWUiLCJhIjoiY2t6Z25hMnpmM3F3bjJvcHZ0MGtrczlwMSJ9.85LKKEVoAWrXdZXIh9Vfcw",
       visible: false,
+      popupWindowDeviceId: '',
       statePopup: {
         isWarn: false,
         isCamera: false,
@@ -60,30 +74,34 @@ export default {
       showOfCamera: false,
       markerArr: [
         {
-          name: "camera",
+          name: "植物园",
           erectArea: "本层",
           equip_uniq_num: "CP_R_BM003",
-          points: [51.5, -0.09]
+          points: [51.5, -0.09],
+          online_status: true
         },
         {
-          name: "camera",
+          name: "野猪林",
           erectArea: "本层",
           equip_uniq_num: "CP_R_BM002",
-          points: [51.53, -0.19]
+          points: [51.53, -0.19],
+          online_status: false
         },
         {
-          name: "camera",
+          name: "快活林",
           erectArea: "本层",
           equip_uniq_num: "CP_R_BM004",
-          points: [51.52, -0.14]
+          points: [51.52, -0.14],
+          online_status: true
         }, {
-          name: "camera",
+          name: "十字坡",
           erectArea: "本层",
           equip_uniq_num: "CP_R_BM001",
-          points: [51.52, -0.124]
+          points: [51.52, -0.124],
+          online_status: false
         },
         {
-          name: "camera",
+          name: "狮子楼",
           erectArea: "本层",
           equip_uniq_num: "CP_R_BM005",
           points: [51.49, -0.06]
@@ -111,6 +129,14 @@ export default {
       ]
     }
   },
+  computed: {
+    getDeviceInfo() {
+      return this.markerArr.filter((device) => {
+        if (device.equip_uniq_num === this.popupWindowDeviceId)
+          return device;
+      })
+    }
+  },
   methods: {
     leafletInit() {
       // 定位
@@ -123,29 +149,53 @@ export default {
         zoomOffset: -1,
         accessToken: this.token
       }).addTo(map);
-      // icon 标注事件绑定
       const _this = this
-      const myIcon =L.icon({
-        iconUrl: require('../assets/green-camera.png'),//marker图片地址
-        iconSize: [57, 71],//marker宽高
-        iconAnchor: [28.5, 71]//marker中心点位置
-      })
-      this.travelBounds(map)
+      // 巡游取点
+      // this.travelBounds(map)
+      //遍历绑定定位点的marker事件
       this.markerArr.forEach((equip) => {
-        const marker = L.marker(equip.points, {icon: myIcon}).addTo(map);
+        let marker;
+        if (equip.online_status) {
+          marker = L.marker(equip.points, {icon: _this.divIconEngine(L, this.iconColor.onlineColor, equip)}).addTo(map);
+        } else {
+          marker = L.marker(equip.points, {icon: _this.divIconEngine(L, this.iconColor.warnColor, equip)}).addTo(map);
+        }
+        equip.marker = marker
         marker.on('click', () => {
-          equip.marker = marker
+          this.popupWindowDeviceId = equip.equip_uniq_num;
           _this.showPopup(map, equip)
         })
       })
-      // 画圆
+      //画圆
       const circle = L.circle([51.508, -0.11], {
         color: 'red',
         fillColor: '#0090ff',
         fillOpacity: 0.5,
         radius: 500
       }).addTo(map);
+      //画线
+      L.polyline([[51.509, -0.08],
+        [51.503, -0.06],
+        [51.51, -0.047]], {color: 'red'}).addTo(map)
       circle.bindPopup("伦敦植物园");
+    },
+    //展示device
+    showDeviceInfo(deviceId) {
+      document.getElementById(deviceId).style.border="";
+      this.visible = true;
+      this.popupWindowDeviceId = deviceId;
+    },
+    //弹出指定deviceId marker
+    showDeviceMarker(deviceId) {
+      this.visible = false
+      let _this = this;
+      this.markerArr.filter((equip) => {
+        if (equip.equip_uniq_num === deviceId) {
+          let domMarker = document.getElementById(equip.equip_uniq_num);
+          // domMarker.style.border = '3px red dashed'
+          domMarker.style.border = "3px " + (equip.online_status ? _this.iconColor.onlineColor : _this.iconColor.warnColor).toString() + " dashed"
+        }
+      })
     },
     //巡游取坐标
     travelBounds(map) {
@@ -162,11 +212,24 @@ export default {
     },
     showPopup(map, equip) {
       this.visible = !this.visible
-      if(!this.parkShow&&this.visible){
+      document.getElementById(equip.equip_uniq_num).style.border="";
+      if (!this.parkShow && this.visible) {
         this.parkShow = true
       }
       console.log(equip)
       // equip.marker.setIcon(this.redIcon)
+    },
+    // font 图标加 div 样式
+    divIconEngine(L, iconColor, equip) {
+      return L.divIcon({
+        className: 'custom-div-icon',
+        html: "<div style='width: 20px;background: " + iconColor + ";color: white;border-radius: 100%;font-size: 14px;'>○</div>" +
+            "<div style='width: 1px;height: 42px;border-left:solid 2px " + iconColor + ";margin-left: 9px;'></div>" +
+            "<i id='" + equip.equip_uniq_num + "' style='font-size:45px;color: " + iconColor + ";margin-top: -10px' class='el-icon-video-camera'></i>" +
+            "<p style='margin-top: -10px;width:50px;font-weight: bold;color:" + iconColor + "'>" + equip.name + "</p>",
+        iconSize: [30, 42],
+        iconAnchor: [15, 42]
+      });
     },
     handleTitle(event) {
       if (event.target === this.clickedEle) {
@@ -240,7 +303,7 @@ export default {
 
 #popup-window {
   height: 460px;
-  width: 800px;
+  width: 39%;
   opacity: 0.89;
   background: #1c1717;
   position: fixed;
@@ -255,13 +318,13 @@ li {
   font-size: 12px;
   font-weight: bolder;
   line-height: 0;
-  margin-left: -20px;
+  /*margin-left: -10px;*/
   margin-top: -20px;
   background-color: #e7e7e8;
   color: #131212;
   border-left: 1px black solid;
   list-style-type: none;
-  width: 35%;
+  width: 33.1%;
 }
 
 #content {
@@ -276,6 +339,10 @@ li {
   height: 320px;
   columns: 90px 3;
   position: fixed;
+}
+
+#content > p {
+  margin: 0;
 }
 
 #warn, #camera {

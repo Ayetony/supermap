@@ -1,15 +1,15 @@
 <template>
   <div>
-    <div v-show="parkshow" id="park">
+    <div v-show="parkShow" id="park">
       <div>
-        <h5 style="height: 5px;margin-top: -60px;color: #0868e5;text-align: left;padding: 5px">设备列表</h5>
+        <h5 style="height: 5px;margin-top: -66px;color: #0868e5;text-align: left;padding: 5px">设备列表</h5>
         <el-input v-model="search" placeholder="搜索">
           <i slot="prepend" class="el-icon-search"></i>
         </el-input>
         <el-button icon="el-icon-delete" type="danger"></el-button>
       </div>
       <div class="pageList">
-        <el-table :header-cell-style="{ background: '#1c1717',lineHeight: '10px'}" :cell-style="{backgroundColor: '#1c1717' }"
+        <el-table :header-cell-style="{ background: '#1c1717',lineHeight: '0px',fontSize: '12px'}" :cell-style="{backgroundColor: '#1c1717',fontSize: '12px' }"
                   :data="pageList.slice((currentPage-1)*pageSize,currentPage*pageSize)">
         <el-table-column label="设备名称" prop="name" width="120">
         </el-table-column>
@@ -20,8 +20,8 @@
         </el-table-column>
         <el-table-column label="操作" width="120">
           <template slot-scope="scope">
-            <el-link :underline="false">{{ scope.row.sm_obj.detail }}</el-link>&nbsp;&nbsp;
-            <el-link :underline="false">{{ scope.row.sm_obj.points }}</el-link>
+            <el-link @click="getDevice(scope.row.equip_uniq_num)">详情</el-link>&nbsp;&nbsp;
+            <el-link @click="showDevice(scope.row.equip_uniq_num)">定位</el-link>
           </template>
         </el-table-column>
         </el-table>
@@ -44,8 +44,12 @@
 export default {
   name: "ParkQuery",
   props: {
-    parkshow: {
+    parkShow: {
       type: Boolean
+    },
+    pageList:{
+      type: Array,
+      required: true
     }
   },
   methods:{
@@ -54,36 +58,19 @@ export default {
     },
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`);
+    },
+    getDevice(deviceId){
+      // 子组件调用父组件的方法并传参
+      this.$emit('deviceInfo', deviceId)
+      console.log(deviceId)
+    },
+    showDevice(deviceId){
+      this.$emit('deviceMarker',deviceId)
+      console.log(deviceId)
     }
   },
   data() {
     return {
-      pageList: [
-        {
-          name: '植物园',
-          online_status: true,
-          sm_obj:{
-            detail: '详情',
-            points: '定位'
-          }
-        },
-        {
-          name: '野猪林',
-          online_status: false,
-          sm_obj:{
-            detail: '详情',
-            points: '定位'
-          }
-        },
-        {
-          name: '野猪林',
-          online_status: false,
-          sm_obj:{
-            detail: '详情',
-            points: '定位'
-          }
-        }
-      ],
       search: '',
       currentPage:1,
       pageSize:10,

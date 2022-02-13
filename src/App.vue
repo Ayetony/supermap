@@ -19,7 +19,7 @@ export default {
 .el-header{
   margin-top: -10px;
   padding-left: 20px;
-  width: 100%;
+  width: 101%;
   line-height: 56px;
   background: #1c1717;
   color: white;
