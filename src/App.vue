@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <el-header>植物园综合管理系统</el-header>
     <Home/>
   </div>
 </template>
@@ -15,13 +16,13 @@ export default {
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin: 0;
-  padding: 0;
+.el-header{
+  margin-top: -10px;
+  padding-left: 20px;
+  width: 100%;
+  line-height: 56px;
+  background: #1c1717;
+  color: white;
 }
+
 </style>

@@ -1,14 +1,20 @@
 <template>
-  <el-container style="height: 900px;">
-    <el-aside style="background-color: rgb(238, 241, 246)" width="10%">
-      <el-menu>
+  <el-container>
+    <el-aside style="background-color: rgb(238, 241, 246)" width="200px">
+      <el-menu default-active="1">
+        <router-link to="/index">
           <el-menu-item index="1">
-            <router-link to="/index">设备状态</router-link>
+            设备状态
           </el-menu-item>
+        </router-link>
+        <router-link to="/park">
           <el-menu-item index="2">
-            <router-link to="/park">视频监控</router-link>
+            视频监控
           </el-menu-item>
+        </router-link>
+        <router-link to="/broadcast">
           <el-menu-item index="3">广播</el-menu-item>
+        </router-link>
       </el-menu>
     </el-aside>
     <el-main>
@@ -24,24 +30,34 @@ export default {
 </script>
 
 <style scoped>
-.el-aside {
-  background-color: #D3DCE6;
-  color: #333;
-  text-align: center;
-  line-height: 100px;
+a{
+  text-decoration: none;
 }
-
+.el-aside {
+  text-align: center;
+  line-height: 80px;
+}
 .el-main {
   background-color: #E9EEF3;
-  color: #333;
   text-align: center;
   line-height: 160px;
 }
-.el-container{
-  margin: 0;
+
+.el-menu {
+  height: 903px;
+  opacity: 0.89;
+  background:  #1c1717;
 }
+
+.el-menu-item.is-active {
+  background-color: green !important;
+  color: white;
+}
+
 .el-menu-item{
-  border: 1px gray solid;
+  color: #445dd7;
 }
+
+
 
 </style>

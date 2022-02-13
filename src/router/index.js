@@ -1,23 +1,23 @@
 import Index from '@/components/Index'
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import ParkQuery from "@/components/ParkQuery";
 import Home from "@/components/Home";
+import BroadCast from "@/components/BroadCast";
 
 Vue.use(VueRouter)
 export default new VueRouter({
     routes:[
         {
             path: '/',
-            redirect: '/home'
+            redirect: '/Index'
         },
         {
             path: "/index",
             component: Index
         },
         {
-            path: '/park',
-            component: ParkQuery
+            path: '/broadcast',
+            component: BroadCast
         },
         {
             path: '/home',
