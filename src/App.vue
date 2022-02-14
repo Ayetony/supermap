@@ -17,9 +17,9 @@ export default {
 
 <style>
 .el-header{
-  margin-top: -10px;
+  margin-top: -2px;
   padding-left: 20px;
-  width: 101%;
+  width: 100%;
   line-height: 56px;
   background: #1c1717;
   color: white;

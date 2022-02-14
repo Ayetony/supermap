@@ -3,22 +3,23 @@
     <div v-show="parkShow" id="park">
       <div>
         <h5 style="height: 5px;margin-top: -66px;color: #0868e5;text-align: left;padding: 5px">设备列表</h5>
-        <el-input v-model="search" placeholder="搜索">
-          <i slot="prepend" class="el-icon-search"></i>
+        <el-input size="mini" v-model.trim="search" @change="handleSearch" placeholder="搜索">
+          <i slot="prepend" class="el-icon-search" style="color: #0868e5"></i>
         </el-input>
-        <el-button icon="el-icon-delete" type="danger"></el-button>
+        <el-button icon="el-icon-delete" type="danger" size="mini" @click="clearSearch"></el-button>
       </div>
       <div class="pageList">
-        <el-table :header-cell-style="{ background: '#1c1717',lineHeight: '0px',fontSize: '12px'}" :cell-style="{backgroundColor: '#1c1717',fontSize: '12px' }"
-                  :data="pageList.slice((currentPage-1)*pageSize,currentPage*pageSize)">
-        <el-table-column label="设备名称" prop="name" width="120">
+        <el-table size="mini" :header-cell-style="{ background: '#1c1717',lineHeight: '0px'}"
+                  :cell-style="{backgroundColor: '#1c1717'}"
+                  :data="getSearchedList.slice((currentPage-1)*pageSize,currentPage*pageSize)">
+        <el-table-column label="设备名称" prop="name" width="90">
         </el-table-column>
-        <el-table-column label="状态" width="120">
+        <el-table-column label="状态" width="90">
           <template slot-scope="scope">
             <span :style="{'color':scope.row.online_status?'green':'red'}">{{ scope.row.online_status?'在线':'不在线' }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="120">
+        <el-table-column label="操作" width="90">
           <template slot-scope="scope">
             <el-link @click="getDevice(scope.row.equip_uniq_num)">详情</el-link>&nbsp;&nbsp;
             <el-link @click="showDevice(scope.row.equip_uniq_num)">定位</el-link>
@@ -52,7 +53,28 @@ export default {
       required: true
     }
   },
+  computed:{
+    getSearchedList(){
+      if(this.search){
+        return  this.pageList.filter((item)=>{
+          if(item.name.indexOf(this.search)!==-1){
+            return item
+          }
+        })
+      }
+      return this.pageList;
+    }
+  },
   methods:{
+    handleSearch(){
+      if(this.search){
+        return this.pageList.filter((item)=>{
+          if(item.name.indexOf(this.search)!==-1){
+            return item
+          }
+        })
+      }
+    },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
     },
@@ -67,13 +89,16 @@ export default {
     showDevice(deviceId){
       this.$emit('deviceMarker',deviceId)
       console.log(deviceId)
+    },
+    clearSearch(){
+      this.search = '';
     }
   },
   data() {
     return {
       search: '',
       currentPage:1,
-      pageSize:10,
+      pageSize:5,
       pageCount:9
     }
   }
@@ -81,28 +106,27 @@ export default {
 </script>
 <style scoped>
 #park {
-  margin-left: 70%;
-  margin-top: -19px;
+  margin-left: 66%;
+  margin-top: -23px;
   height: 900px;
-  width: 380px;
+  width: 21%;
   opacity: 0.89;
   float: right;
-  position: fixed;
+  position: absolute;
   background: #1c1717;
   z-index: 2147483648;
 }
-
-.el-input {
+.el-input{
   margin-top: 65px;
-  margin-left: -147px;
+  margin-left: -45%;
   position: absolute;
-  width: 200px;
+  width: 180px;
   font-size: 12px;
   float: right;
 }
 .el-button{
   margin-top: 65px;
-  margin-left: 60px;
+  margin-left: 18%;
   position: absolute;
 }
 .pageList {
@@ -110,10 +134,12 @@ export default {
   border-top: 1px #ffffff solid;
 }
 .el-table{
-   background-color: #1c1717
+  background-color: #1c1717;
 }
+.el-table-co
 .el-pagination{
-  width: 300px;
+  position: absolute;
+  width: 100%;
   font-size: 12px;
 }
 </style>

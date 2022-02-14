@@ -8,7 +8,7 @@
       </h2>
       <h5 style="color: #0868e5;margin-top: -60px;padding-top: 5px;">详细信息</h5>
       <div style="margin-top: -20px">
-        <ul style="margin-left: -5%">
+        <ul>
           <li name="isCamera"><p @click="handleTitle">视频监控</p></li>
           <li name="isEquip"><p id="mid" @click="handleTitle">设备信息</p></li>
           <li name="isWarn"><p @click="handleTitle">告警信息</p></li>
@@ -42,7 +42,7 @@
 
 <script>
 import L from 'leaflet'
-import ParkQuery from "@/components/ParkQuery";
+import ParkQuery from "@/components/video/parkQuery";
 
 export default {
   name: 'Index',
@@ -57,7 +57,7 @@ export default {
       },
       parkShow: false,
       redIcon: L.icon({
-        iconUrl: require('../assets/warn-red-camera.png'),//marker图片地址
+        iconUrl: require('../../assets/warn-red-camera.png'),//marker图片地址
         iconSize: [57, 71],//marker宽高
         iconAnchor: [28.5, 71]//marker中心点位置
       }),
@@ -104,7 +104,8 @@ export default {
           name: "狮子楼",
           erectArea: "本层",
           equip_uniq_num: "CP_R_BM005",
-          points: [51.49, -0.06]
+          points: [51.49, -0.06],
+          online_status: true
         }
       ],
       clickedEle: null,
@@ -217,7 +218,7 @@ export default {
         this.parkShow = true
       }
       console.log(equip)
-      // equip.marker.setIcon(this.redIcon)
+      // video.marker.setIcon(this.redIcon)
     },
     // font 图标加 div 样式
     divIconEngine(L, iconColor, equip) {
@@ -295,15 +296,16 @@ export default {
 <style scoped>
 #map {
   position: absolute;
-  margin-left: -15px;
-  margin-top: -17px;
-  width: 100%;
-  height: 900px;
+  margin-left: -1.2%;
+  margin-top: -1.2%;
+  padding-right: 0.8%;
+  width: 87%;
+  height: 100%;
 }
 
 #popup-window {
   height: 460px;
-  width: 39%;
+  width: 50%;
   opacity: 0.89;
   background: #1c1717;
   position: fixed;
@@ -311,6 +313,7 @@ export default {
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 2147483647;
+  margin-left: -5%;
 }
 
 li {
@@ -318,13 +321,11 @@ li {
   font-size: 12px;
   font-weight: bolder;
   line-height: 0;
-  /*margin-left: -10px;*/
   margin-top: -20px;
   background-color: #e7e7e8;
   color: #131212;
-  border-left: 1px black solid;
   list-style-type: none;
-  width: 33.1%;
+  width: 31.5%;
 }
 
 #content {
@@ -346,7 +347,7 @@ li {
 }
 
 #warn, #camera {
-  clear: left;
+  /*clear: left;*/
   line-height: 25px;
   font-size: 12px;
   color: #e7e7e8;

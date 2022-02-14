@@ -1,19 +1,21 @@
 <template>
   <el-container>
-    <el-aside style="background-color: rgb(238, 241, 246)" width="200px">
+    <el-aside style="background-color: rgb(238, 241, 246);text-align: left" width="12%">
       <el-menu default-active="1">
         <router-link to="/index">
           <el-menu-item index="1">
-            设备状态
+            <i class="el-icon-video-camera" style="font-size: 30px;margin-left: -10px"></i>&nbsp;视频监控系统
           </el-menu-item>
         </router-link>
-        <router-link to="/park">
+        <router-link to="/env">
           <el-menu-item index="2">
-            视频监控
+            <i class="el-icon-s-tools" style="font-size: 30px;margin-left: -10px"></i>&nbsp;环境监控系统
           </el-menu-item>
         </router-link>
         <router-link to="/broadcast">
-          <el-menu-item index="3">广播</el-menu-item>
+          <el-menu-item index="3">
+            <i class="el-icon-s-platform" style="font-size: 30px;margin-left: -10px"></i>&nbsp;广播管理监控系统
+          </el-menu-item>
         </router-link>
       </el-menu>
     </el-aside>
@@ -44,7 +46,7 @@ a{
 }
 
 .el-menu {
-  height: 903px;
+  height: 900px;
   opacity: 0.89;
   background:  #1c1717;
 }
