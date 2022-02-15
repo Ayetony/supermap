@@ -1,9 +1,13 @@
 <template>
-  <div>广播</div>
+  <IndexMap />
 </template>
 <script>
+import IndexMap from '@/components/video/indexMap'
 export default {
-  name: "BroadCast"
+  name: "BroadCast",
+  components:{
+    IndexMap
+  }
 }
 </script>
 

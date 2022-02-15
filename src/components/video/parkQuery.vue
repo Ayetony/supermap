@@ -1,15 +1,15 @@
 <template>
   <div>
-    <div v-show="parkShow" id="park">
+    <div v-show="'$store.state.parkShow'" id="park">
       <div>
-        <h5 style="height: 5px;margin-top: -66px;color: #0868e5;text-align: left;padding: 5px">设备列表</h5>
+        <h5 style="height: 5px;margin-top: -66px;color: #0868e5;padding: 5px">设备列表</h5>
         <el-input size="mini" v-model.trim="search" @change="handleSearch" placeholder="搜索">
           <i slot="prepend" class="el-icon-search" style="color: #0868e5"></i>
         </el-input>
         <el-button icon="el-icon-delete" type="danger" size="mini" @click="clearSearch"></el-button>
       </div>
       <div class="pageList">
-        <el-table size="mini" :header-cell-style="{ background: '#1c1717',lineHeight: '0px'}"
+        <el-table size="mini" :header-cell-style="{ background: '#1c1717',lineHeight: '0'}"
                   :cell-style="{backgroundColor: '#1c1717'}"
                   :data="getSearchedList.slice((currentPage-1)*pageSize,currentPage*pageSize)">
         <el-table-column label="设备名称" prop="name" width="90">
@@ -45,9 +45,6 @@
 export default {
   name: "ParkQuery",
   props: {
-    parkShow: {
-      type: Boolean
-    },
     pageList:{
       type: Array,
       required: true
@@ -63,6 +60,9 @@ export default {
         })
       }
       return this.pageList;
+    },
+    '$store.state.parkShow':function (newVal){
+      return newVal
     }
   },
   methods:{
@@ -136,7 +136,6 @@ export default {
 .el-table{
   background-color: #1c1717;
 }
-.el-table-co
 .el-pagination{
   position: absolute;
   width: 100%;

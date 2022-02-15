@@ -1,7 +1,7 @@
 <template>
   <el-container>
     <el-aside style="background-color: rgb(238, 241, 246);text-align: left" width="12%">
-      <el-menu default-active="1">
+      <el-menu default-active="1" mode="vertical">
         <router-link to="/index">
           <el-menu-item index="1">
             <i class="el-icon-video-camera" style="font-size: 30px;margin-left: -10px"></i>&nbsp;视频监控系统
@@ -27,7 +27,7 @@
 
 <script>
 export default {
-  name: "Home",
+  name: "Home"
 }
 </script>
 
