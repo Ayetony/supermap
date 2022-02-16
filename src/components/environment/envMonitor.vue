@@ -1,7 +1,7 @@
 <template>
   <div>
-    <Locator :marker-arr="markerArr" :icon-color="iconColor"/>
-    <EnvToolPane :equip="markerArr[1]"/>
+    <Locator :marker-arr="markerArr" :icon-color="iconColor" :columnName="currentColumn"/>
+    <EnvToolPane :markerArr="markerArr"/>
   </div>
 </template>
 <script>
@@ -15,11 +15,11 @@ export default {
   },
   data(){
     return{
+      currentColumn: 'envClear',
       iconColor: {
-        warnColor: '#d32828',
+        warnColor: '#ff0000',
         onlineColor: '#0868e5',
         earlyWarningColor: 'orange'
-
       },
       markerArr: [
         {
@@ -98,18 +98,35 @@ export default {
     clearNextInit(){
       //清理上一次marker然后初始化
       for (let clearMapKey in this.$store.state.clearMap) {
-        if(this.$store.state.clearMap[clearMapKey]){
-          console.log('video:' , clearMapKey)
-          this.$store.commit('get'+ clearMapKey.slice(0,1).toUpperCase() + clearMapKey.slice(1),false)
+        if(!this.$store.state.clearMap[clearMapKey]){
+          if(!clearMapKey === this.$store.state.clearMap.envClear) {
+            this.$store.commit('get' + clearMapKey.slice(0, 1).toUpperCase() + clearMapKey.slice(1), true)
+          }
         }
       }
     }
+
   },
   mounted() {
     this.clearNextInit();
-    this.$store.commit('getEnvClear', true)
-    this.$store.commit('getVisible', false)
-
+    if(this.$store.state.clearMap.envClear){
+      this.$store.commit('getEnvClear', '')
+    }
+  },
+  watch:{
+    '$store.state.clearMap.envClear': {
+      immediate: true,
+      handler(newVal) {
+        if (newVal) {
+          if (this.$store.state.parkShow) {
+            this.$store.commit('getParkShow', false)
+          }
+          this.markerArr.forEach((marker) => {
+            marker.marker.remove();
+          })
+        }
+      }
+    }
   }
 }
 </script>

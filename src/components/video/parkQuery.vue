@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-show="'$store.state.parkShow'" id="park">
+    <div v-show="getParkShow" id="park">
       <div>
         <h5 style="height: 5px;margin-top: -66px;color: #0868e5;padding: 5px">设备列表</h5>
         <el-input size="mini" v-model.trim="search" @change="handleSearch" placeholder="搜索">
@@ -61,8 +61,8 @@ export default {
       }
       return this.pageList;
     },
-    '$store.state.parkShow':function (newVal){
-      return newVal
+    getParkShow(){
+      return this.$store.state.parkShow
     }
   },
   methods:{

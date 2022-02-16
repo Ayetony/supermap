@@ -2,8 +2,9 @@
   <div>
     <ParkQuery :pageList="markerArr" @deviceInfo="showDeviceInfo"
                @deviceMarker="showDeviceMarker"/>
-    <MapPopup :popupWindowDeviceId="popupWindowDeviceId" :markerArr="markerArr" :warnList="warnList"/>
-    <Locator :markerArr="markerArr" @deviceMarkerEvent="getMarkerDeviceId" :iconColor="iconColor"/>
+    <MapPopup :markerArr="markerArr" :popupWindowDeviceId="popupWindowDeviceId" :warnList="warnList"/>
+    <Locator :columnName="currentColumn" :iconColor="iconColor" :markerArr="markerArr"
+             @deviceMarkerEvent="getMarkerDeviceId"/>
   </div>
 </template>
 
@@ -20,11 +21,11 @@ export default {
   },
   data() {
     return {
+      currentColumn: 'videoClear',
       iconColor: {
-        warnColor: '#d32828',
+        warnColor: '#ff0000',
         onlineColor: '#0868e5'
       },
-      visible: false,
       popupWindowDeviceId: '',
       markerArr: [
         {
@@ -116,13 +117,13 @@ export default {
     showDeviceInfo(deviceId) {
       document.getElementById(deviceId).style.border = "";
       this.visible = true;
-      this.$store.commit("getVisible",this.visible)
+      this.$store.commit("getVisible", this.visible)
       this.popupWindowDeviceId = deviceId;
     },
     //弹出指定deviceId marker
     showDeviceMarker(deviceId) {
       this.visible = false
-      this.$store.commit("getVisible",this.visible)
+      this.$store.commit("getVisible", this.visible)
       let _this = this;
       this.markerArr.filter((equip) => {
         if (equip.equip_uniq_num === deviceId) {
@@ -131,26 +132,38 @@ export default {
         }
       })
     },
-    getMarkerDeviceId(deviceId){
+    getMarkerDeviceId(deviceId) {
       this.popupWindowDeviceId = deviceId;
+    },
+    clearNextInit() {
+      //默认关闭popup
+      if(this.$store.state.visible){
+        this.$store.commit('getVisible', false)
+      }
+      //清理上一次marker然后初始化
+      for (let clearMapKey in this.$store.state.clearMap) {
+        if (!this.$store.state.clearMap[clearMapKey]) {
+          if (!clearMapKey === this.$store.state.clearMap.videoClear) {
+            this.$store.commit('get' + clearMapKey.slice(0, 1).toUpperCase() + clearMapKey.slice(1), true)
+          }
+        }
+      }
     }
   },
   mounted() {
-    this.$store.commit('getVideoClear', true)
+    this.clearNextInit()
+    if (this.$store.state.clearMap.videoClear) {
+      this.$store.commit('getVideoClear', false);
+    }
   },
-  watch:{
-    '$store.state.visible'(newVal){
-      this.visible = newVal
-    },
-    '$store.state.clearMap.videoClear'(newVal){
-      console.log('marker remove',newVal)
-      if(!newVal){
-        if(this.$store.state.visible){
-          this.$store.commit('getVisible', false)
+  watch: {
+    '$store.state.clearMap.videoClear': {
+      handler(newVal) {
+        if (newVal) {
+          this.markerArr.forEach((marker) => {
+            marker.marker.remove();
+          })
         }
-        this.markerArr.forEach((marker)=>{
-          marker.marker.remove();
-        })
       }
     }
   }

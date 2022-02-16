@@ -15,11 +15,12 @@ const vuexStore = new Vuex.Store({
   state:{
     visible : false,
     parkShow: false,
+    rects: [],
     clearMap: {
       videoClear: false,
       envClear: false,
       broadCastClear: false
-    }
+    },
   },
   mutations:{
     getVisible(state,arg){
@@ -36,6 +37,9 @@ const vuexStore = new Vuex.Store({
     },
     getBroadCastClear(state, arg){
       state.clearMap.broadCastClear = arg;
+    },
+    getRects(state, arg){
+      state.rects = arg
     }
   }
 });

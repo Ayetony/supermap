@@ -9,7 +9,7 @@
       </ul>
       <br/>
       <div v-show="showOfEquip" id="content">
-        <p v-for="equip_info in getDeviceInfo" :key="equip_info.equip_uniq_num">
+        <p style="margin-top: 0" v-for="equip_info in getDeviceInfo" :key="equip_info.equip_uniq_num">
           设备名称：{{ equip_info.name }}<br/>
           设备安装区域：{{ equip_info.erectArea }}<br/>
           设备唯一识别编码：{{ equip_info.equip_uniq_num }}<br/>
@@ -22,13 +22,13 @@
         </p>
       </div>
       <div v-show="showOfWarn" id="warn">
-        <el-table size="mini" style="width: 85%;line-height: 10px" height="280px"
+        <el-table size="mini" style="width: 95%;line-height: 10px" height="275px"
                   :header-cell-style="{ background: '#1c1717'}"
                   :cell-style="{backgroundColor: '#1c1717',padding: '0',borderBottom: '0'}"
                   :data="warnList.slice((currentPage-1)*pageSize,currentPage*pageSize)">
-          <el-table-column label="告警时间" prop="warn_time" width="200">
+          <el-table-column label="告警时间" prop="warn_time" width="180">
           </el-table-column>
-          <el-table-column  label="告警信息" width="350">
+          <el-table-column  label="告警信息" width="300">
             <template slot-scope="scope">
               <p style="color: red">{{ scope.row.warn_detail }}</p>
             </template>
@@ -49,7 +49,7 @@
             :total="warnList.length">
         </el-pagination>
       </div>
-      <div v-show="showOfCamera" style="margin-left: 100px" id="camera">
+      <div v-show="showOfCamera" style="margin-left: 20px" id="camera">
         摄像机
       </div>
     </div>
@@ -169,15 +169,15 @@ li {
 }
 
 #content {
-  clear: left;
+  /*clear: both;*/
   line-height: 25px;
   font-size: 12px;
   color: #e7e7e8;
-  margin-top: -100px;
+  margin-top: -110px;
   margin-left: 5%;;
-  width: 95%;
+  width: 90%;
   text-align: left;
-  height: 360px;
+  height: 320px;
   columns: 90px 3;
 }
 
@@ -186,7 +186,7 @@ li {
   color: #e7e7e8;
   margin-top: -135px;
   margin-left: 21px;
-  width: 95%;
+  width: 90%;
   text-align: left;
   height: 320px;
 }
@@ -206,5 +206,6 @@ li > p {
 }
 .el-table{
   background-color: #1c1717;
+  margin: 0;
 }
 </style>
