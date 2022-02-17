@@ -15,7 +15,7 @@ const vuexStore = new Vuex.Store({
   state:{
     visible : false,
     parkShow: false,
-    rects: [],
+    rectsJson: '',
     clearMap: {
       videoClear: false,
       envClear: false,
@@ -38,8 +38,15 @@ const vuexStore = new Vuex.Store({
     getBroadCastClear(state, arg){
       state.clearMap.broadCastClear = arg;
     },
-    getRects(state, arg){
-      state.rects = arg
+    getRectsJson(state, arg){
+      state.rectsJson = arg
+    }
+  },
+  actions:{
+    getRectsJson(context, arg){
+      setTimeout(()=>{
+        context.commit('getRectsJson', arg)
+      },100)
     }
   }
 });

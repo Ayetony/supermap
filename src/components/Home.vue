@@ -1,22 +1,16 @@
 <template>
   <el-container>
     <el-aside style="background-color: rgb(238, 241, 246);text-align: left" width="12%">
-      <el-menu default-active="1" mode="vertical">
-        <router-link to="/index">
-          <el-menu-item index="1">
+      <el-menu :default-active="activeIndex" router>
+          <el-menu-item index="/index">
             <i class="el-icon-video-camera" style="font-size: 30px;margin-left: -10px"></i>&nbsp;视频监控系统
           </el-menu-item>
-        </router-link>
-        <router-link to="/env">
-          <el-menu-item index="2">
+          <el-menu-item index="/env">
             <i class="el-icon-s-tools" style="font-size: 30px;margin-left: -10px"></i>&nbsp;环境监控系统
           </el-menu-item>
-        </router-link>
-        <router-link to="/broadcast">
-          <el-menu-item index="3">
+          <el-menu-item index="/broadcast">
             <i class="el-icon-s-platform" style="font-size: 30px;margin-left: -10px"></i>&nbsp;广播管理监控系统
           </el-menu-item>
-        </router-link>
       </el-menu>
     </el-aside>
     <el-main>
@@ -27,7 +21,13 @@
 
 <script>
 export default {
-  name: "Home"
+  name: "Home",
+  data(){
+    return{
+      // element ui el-menu 根据当前路由绑定default-index，也就是默认路由激活栏
+      activeIndex: this.$route.path
+    }
+  }
 }
 </script>
 

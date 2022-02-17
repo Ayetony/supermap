@@ -4,7 +4,7 @@
                @deviceMarker="showDeviceMarker"/>
     <MapPopup :markerArr="markerArr" :popupWindowDeviceId="popupWindowDeviceId" :warnList="warnList"/>
     <Locator :columnName="currentColumn" :iconColor="iconColor" :markerArr="markerArr"
-             @deviceMarkerEvent="getMarkerDeviceId"/>
+             @deviceMarkerEvent="getMarkerDeviceId" @popupVisibleEvent="showDeviceInfo"/>
   </div>
 </template>
 
@@ -156,16 +156,10 @@ export default {
       this.$store.commit('getVideoClear', false);
     }
   },
-  watch: {
-    '$store.state.clearMap.videoClear': {
-      handler(newVal) {
-        if (newVal) {
-          this.markerArr.forEach((marker) => {
-            marker.marker.remove();
-          })
-        }
-      }
-    }
+  beforeDestroy() {
+    this.markerArr.forEach((marker) => {
+      marker.marker.remove();
+    })
   }
 }
 </script>

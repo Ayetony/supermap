@@ -14,17 +14,10 @@ export default {
           'contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
       videoUrl: 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}',
       token: "pk.eyJ1IjoibWlhb2RheWUiLCJhIjoiY2t6Z25hMnpmM3F3bjJvcHZ0MGtrczlwMSJ9.85LKKEVoAWrXdZXIh9Vfcw",
-      parkShow: false,
-      rect:{
-        left:'',
-        right:'',
-        top:'',
-        bottom:'',
-        equip_uniq_num:''
-      }
+      parkShow: false
     }
   },
-  props: ['markerArr', 'iconColor','columnName'],
+  props: ['markerArr', 'iconColor', 'columnName'],
   methods: {
     leafletInit() {
       // 定位
@@ -37,6 +30,7 @@ export default {
         zoomOffset: -1,
         accessToken: this.token
       }).addTo(map);
+      map.doubleClickZoom.disable();//禁止双击zoom
       const _this = this
       //遍历绑定定位点的marker事件
       this.markerArr.forEach((equip) => {
@@ -51,53 +45,26 @@ export default {
           _this.showPopup(map, equip)
         })
       })
-      if(this.columnName === 'envClear'){
-        //开局一张图
-        let _L = L;
-        let _this = this;
-        let rects = [] ;
-        this.markerArr.forEach((equip) => {
-          const boundingClientRect = _L.DomUtil.get(equip.equip_uniq_num).getBoundingClientRect();
-          _this.rect.bottom = boundingClientRect.bottom;
-          _this.rect.left = boundingClientRect.left;
-          _this.rect.right = boundingClientRect.right;
-          _this.rect.top = boundingClientRect.top;
-          _this.rect.equip_uniq_num = equip.equip_uniq_num
-          rects.push(_this.rect);
-          _this.$store.commit('getRects', rects);
-          map.on("zoomend", function (){
-            let boundingClientRect = _L.DomUtil.get(equip.equip_uniq_num).getBoundingClientRect();
-            _this.rect.bottom = boundingClientRect.bottom;
-            _this.rect.left = boundingClientRect.left;
-            _this.rect.right = boundingClientRect.right;
-            _this.rect.top = boundingClientRect.top;
-            _this.rect.equip_uniq_num = equip.equip_uniq_num
-            let rects = _this.$store.state.rects;
-            for (let i = 0; i < rects.length; i++) {
-              if(_this.rect.equip_uniq_num === equip.equip_uniq_num){
-                rects[i] = _this.rect;
-                _this.$store.commit('getRects',rects);
-                break;
-              }
-            }
-          })
-        })
+      if (this.columnName === 'envClear') {
+        this.initialRectVuex(map)
       }
+      return map
     },
     //巡游取点
     travelBounds(map) {
       const popup = L.popup();
-
       function onMapClick(e) {
         popup.setLatLng(e.latlng)
             .setContent("You clicked the map at " + e.latlng.toString())
             .openOn(map);
       }
-
       map.on('click', onMapClick);
     },
     showPopup(map, equip) {
       this.visible = !this.visible
+      if(this.visible){
+        this.$emit('popupVisibleEvent', equip.equip_uniq_num);
+      }
       if (!this.parkShow && this.visible) {
         this.parkShow = true
         this.$store.commit('getParkShow', this.parkShow)
@@ -129,7 +96,49 @@ export default {
         });
       }
       return '';
+    },
+    initialRectVuex(map){
+      //开局一张图，试着利用boundingClientRect追踪复位（不理想的）
+      let rects = [];
+      const _this = this
+      this.markerArr.forEach((equip) => {
+        const boundingClientRect = L.DomUtil.get(equip.equip_uniq_num).getBoundingClientRect();
+        const rect = {}
+        rect.left = boundingClientRect.left;
+        rect.top = boundingClientRect.top;
+        rect.equip_uniq_num = equip.equip_uniq_num;
+        rects.push(rect);
+        map.on("moveend", function () {
+          const rect = {}
+          let boundingClientRect = L.DomUtil.get(equip.equip_uniq_num).getBoundingClientRect();
+          const bodyRect = document.body.getBoundingClientRect();
+          rect.left = boundingClientRect.left - bodyRect.left;
+          rect.top = boundingClientRect.top - bodyRect.top;
+          rect.equip_uniq_num = equip.equip_uniq_num;
+          if(_this.$store.state.rectsJson !== '') {
+            const rectArrFromJson = JSON.parse(_this.$store.state.rectsJson);
+            for (let i = 0; i < rectArrFromJson.length; i++) {
+              if (rect.equip_uniq_num === rectArrFromJson[i].equip_uniq_num && rect.left !== rectArrFromJson[i].left && rect.top !== rectArrFromJson[i].top) {
+                rectArrFromJson[i] = rect;
+                _this.$store.dispatch('getRectsJson', JSON.stringify(rectArrFromJson));
+                break;
+              }
+            }
+          }
+        })
+      })
+      this.$store.dispatch('getRectsJson', JSON.stringify(rects));
     }
+  },
+  beforeCreate(){
+    if(sessionStorage.getItem('store')){
+      this.$store.replaceState(Object.assign({}, this.$store.state,
+          JSON.parse(sessionStorage.getItem('store'))))
+    }
+    //session before unload event ,save the state
+    window.addEventListener('beforeunload',()=>{
+      sessionStorage.setItem('store', JSON.stringify(this.$store.state))
+    })
   },
   mounted() {
     this.leafletInit();

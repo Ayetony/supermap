@@ -110,23 +110,16 @@ export default {
   mounted() {
     this.clearNextInit();
     if(this.$store.state.clearMap.envClear){
-      this.$store.commit('getEnvClear', '')
+      this.$store.commit('getEnvClear', false)
     }
   },
-  watch:{
-    '$store.state.clearMap.envClear': {
-      immediate: true,
-      handler(newVal) {
-        if (newVal) {
-          if (this.$store.state.parkShow) {
-            this.$store.commit('getParkShow', false)
-          }
-          this.markerArr.forEach((marker) => {
-            marker.marker.remove();
-          })
-        }
-      }
+  beforeDestroy() {
+    if (this.$store.state.parkShow) {
+      this.$store.commit('getParkShow', false)
     }
+    this.markerArr.forEach((marker) => {
+      marker.marker.remove();
+    })
   }
 }
 </script>

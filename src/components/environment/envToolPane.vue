@@ -1,26 +1,24 @@
 <template>
   <div>
-    <ul v-for="rect in getRects" :key="rect.equip_uniq_num" :style="{left: rect.left+'px',
-    right: rect.right+'px',
-    top: rect.top+'px',
-    bottom: rect.bottom+'px'}" class="pane">
-    hello
-<!--      <li v-if="getMarker(rect.equip_uniq_num).equip_uniq_num === rect.equip_uniq_num">设备状态:</li>-->
-<!--      <li>-->
-<!--        <div class="env-color"></div>&nbsp;PM2.5<a>{{ getMarker(rect.equip_uniq_num).env.pm25 }}</a>-->
-<!--      </li>-->
-<!--      <li>-->
-<!--        <div class="env-color"></div>&nbsp;温度<a>{{ getMarker(rect.equip_uniq_num).env.temperature }}</a>-->
-<!--      </li>-->
-<!--      <li>-->
-<!--        <div class="env-color"></div>&nbsp;湿度<a>{{ getMarker(rect.equip_uniq_num).env.humidity }}</a>-->
-<!--      </li>-->
-<!--      <li>-->
-<!--        <div class="env-color"></div>&nbsp;风速风向<a>{{ getMarker(rect.equip_uniq_num).env.wind }}</a>-->
-<!--      </li>-->
-<!--      <li>-->
-<!--        <div class="env-color"></div>&nbsp;降雨量<a>{{ getMarker(rect.equip_uniq_num).env.precipitation }}</a>-->
-<!--      </li>-->
+    <ul v-for="rect in getRects" :key="rect.equip_uniq_num" :style="{left: rect.left+'px',top: rect.top+'px'}"
+        class="pane">
+      <li>设备状态:</li>
+      <li>
+        <div class="env-color"></div>&nbsp;PM2.5<a>{{ getMarkerById(rect.equip_uniq_num).env.pm25 }}</a>
+      </li>
+      <li>
+        <div class="env-color"></div>&nbsp;温度<a>{{ getMarkerById(rect.equip_uniq_num).equip_uniq_num }}</a>
+      </li>
+      <li>
+        <div class="env-color"></div>&nbsp;湿度<a>{{ getMarkerById(rect.equip_uniq_num).env.humidity }}</a>
+      </li>
+      <li>
+        <div class="env-color"></div>&nbsp;风速风向<a>{{ getMarkerById(rect.equip_uniq_num).env.wind }}</a>
+      </li>
+      <li>
+        <div class="env-color"></div>&nbsp;降雨量<a>{{ getMarkerById(rect.equip_uniq_num).env.precipitation }}</a>
+      </li>
+      <span style="color: #04c5f6" @click="getEnvById(rect.equip_uniq_num)">更多详情</span>
     </ul>
   </div>
 </template>
@@ -35,10 +33,10 @@ export default {
   },
   computed: {
     getRects() {
-      return this.$store.state.rects;
+      return JSON.parse(this.$store.state.rectsJson)
     },
-    getMarker() {
-      return function (markerId) {
+    getMarkerById() {
+      return markerId => {
         const markers = this.markerArr.filter((marker) => {
           if (marker.equip_uniq_num === markerId) {
             return marker;
@@ -50,13 +48,18 @@ export default {
   },
   data() {
     return {}
+  },
+  methods: {
+    getEnvById(envId) {
+      return envId;
+    }
   }
 }
 </script>
 
 <style scoped>
 .pane {
-  margin-top: -5px;
+  margin-top: 45px;
   padding-top: 5px;
   list-style-type: none;
   text-align: left;
@@ -65,9 +68,10 @@ export default {
   font-size: 8px;
   line-height: 18px;
   width: 110px;
-  height: 120px;
+  height: 135px;
   color: white;
   z-index: 2147483647;
+  margin-left: 5px;
   position: fixed;
 }
 
