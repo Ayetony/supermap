@@ -2,30 +2,64 @@
   <div>
     <div v-show="getParkShow" id="park">
       <div>
-        <h5 style="height: 5px;margin-top: -66px;color: #0868e5;padding: 5px">设备列表</h5>
+        <h5 style="height: 5px;margin-top: -60px;color: #0868e5;padding: 5px;margin-left: -25%">设备列表</h5>
         <el-input size="mini" v-model.trim="search" @change="handleSearch" placeholder="搜索">
           <i slot="prepend" class="el-icon-search" style="color: #0868e5"></i>
         </el-input>
         <el-button icon="el-icon-delete" type="danger" size="mini" @click="clearSearch"></el-button>
       </div>
       <div class="pageList">
-        <el-table size="mini" :header-cell-style="{ background: '#1c1717',lineHeight: '0'}"
+        <el-table size="mini"
+                  style="width: 98%;margin-left: 5px"
+                  height="280px" :header-cell-style="{ background: '#1c1717',lineHeight: '0'}"
                   :cell-style="{backgroundColor: '#1c1717'}"
                   :data="getSearchedList.slice((currentPage-1)*pageSize,currentPage*pageSize)">
-        <el-table-column label="设备名称" prop="name" width="90">
+        <el-table-column label="点位名称" prop="name" width="100">
         </el-table-column>
-        <el-table-column label="状态" width="90">
+        <el-table-column label="状态" width="80">
           <template slot-scope="scope">
             <span :style="{'color':scope.row.online_status?'green':'red'}">{{ scope.row.online_status?'在线':'不在线' }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="90">
+        <el-table-column label="操作" width="120">
           <template slot-scope="scope">
             <el-link @click="getDevice(scope.row.equip_uniq_num)">详情</el-link>&nbsp;&nbsp;
             <el-link @click="showDevice(scope.row.equip_uniq_num)">定位</el-link>
           </template>
         </el-table-column>
         </el-table>
+        <ConditionDesc>
+          <template slot-scope="data" v-if="showConditionDesc">
+            <el-table size="mini" height="251px" style="width: 98%;margin-left: 5px" :header-cell-style="{background: '#1c1717',lineHeight: '8px'}"
+                      :cell-style="{backgroundColor: '#1c1717'}"
+                      border
+                      :data="data.descData">
+              <el-table-column label="状态说明" prop="statusName" width="70">
+              </el-table-column>
+              <el-table-column label="正常" prop="normal" width="80">
+                <template slot="header">
+                  &nbsp;正常<ColorOption color="#15d81d" marginTop="3px" />
+                </template>
+              </el-table-column>
+              <el-table-column label="注意防范" prop="cautious" width="120">
+                <template slot="header">
+                  &nbsp;注意防范<ColorOption color="#FF7200" marginTop="3px"/>
+                </template>
+                <template slot-scope="scope">
+                  {{ scope.row.cautious.toLocaleString() }}
+                </template>
+              </el-table-column>
+              <el-table-column label="预警" prop="earlyWarning" width="120">
+                <template slot="header">
+                  &nbsp;预警<ColorOption color="#ff0000" marginTop="3px"/>
+                </template>
+                <template slot-scope="scope">
+                  {{ scope.row.earlyWarning.toLocaleString() }}
+                </template>
+              </el-table-column>
+            </el-table>
+          </template>
+        </ConditionDesc>
         <el-pagination
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
@@ -38,16 +72,26 @@
         </el-pagination>
       </div>
     </div>
+
   </div>
 </template>
 
 <script>
+import ConditionDesc from '@/components/environment/conditionDesc'
+import ColorOption from "@/components/common/colorOption";
 export default {
   name: "ParkQuery",
+  components:{
+    ColorOption,
+    ConditionDesc
+  },
   props: {
     pageList:{
       type: Array,
       required: true
+    },
+    showConditionDesc:{
+      type: Boolean
     }
   },
   computed:{
@@ -106,10 +150,10 @@ export default {
 </script>
 <style scoped>
 #park {
-  margin-left: 66%;
+  margin-left: 60%;
   margin-top: -23px;
   height: 900px;
-  width: 21%;
+  width: 27%;
   opacity: 0.89;
   float: right;
   position: absolute;
@@ -126,7 +170,7 @@ export default {
 }
 .el-button{
   margin-top: 65px;
-  margin-left: 18%;
+  margin-left: -3%;
   position: absolute;
 }
 .pageList {
@@ -140,5 +184,6 @@ export default {
   position: absolute;
   width: 100%;
   font-size: 12px;
+  margin-left: -135px;
 }
 </style>

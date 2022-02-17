@@ -14,7 +14,6 @@ export default {
           'contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
       videoUrl: 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}',
       token: "pk.eyJ1IjoibWlhb2RheWUiLCJhIjoiY2t6Z25hMnpmM3F3bjJvcHZ0MGtrczlwMSJ9.85LKKEVoAWrXdZXIh9Vfcw",
-      parkShow: false
     }
   },
   props: ['markerArr', 'iconColor', 'columnName'],
@@ -61,15 +60,13 @@ export default {
       map.on('click', onMapClick);
     },
     showPopup(map, equip) {
-      this.visible = !this.visible
-      if(this.visible){
+      this.$store.commit("getVisible", true)
+      if(this.$store.state.visible){
         this.$emit('popupVisibleEvent', equip.equip_uniq_num);
       }
-      if (!this.parkShow && this.visible) {
-        this.parkShow = true
-        this.$store.commit('getParkShow', this.parkShow)
+      if (!this.$store.state.parkShow&&this.$store.state.visible) {
+        this.$store.commit('getParkShow', true)
       }
-      this.$store.commit("getVisible", this.visible)
       document.getElementById(equip.equip_uniq_num).style.border = "";
     },
     // font 图标加 div 样式

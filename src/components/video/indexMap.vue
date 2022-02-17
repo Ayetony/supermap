@@ -1,10 +1,10 @@
 <template>
   <div>
-    <ParkQuery :pageList="markerArr" @deviceInfo="showDeviceInfo"
+    <ParkQuery :pageList="markerArr" @deviceInfo="showDeviceInfo" :showConditionDesc="false"
                @deviceMarker="showDeviceMarker"/>
     <MapPopup :markerArr="markerArr" :popupWindowDeviceId="popupWindowDeviceId" :warnList="warnList"/>
     <Locator :columnName="currentColumn" :iconColor="iconColor" :markerArr="markerArr"
-             @deviceMarkerEvent="getMarkerDeviceId" @popupVisibleEvent="showDeviceInfo"/>
+             @deviceMarkerEvent="getMarkerDeviceId" @popupVisibleEvent.passive="showDeviceInfo"/>
   </div>
 </template>
 
@@ -113,7 +113,7 @@ export default {
     }
   },
   methods: {
-    //展示device
+    //框图 via device id
     showDeviceInfo(deviceId) {
       document.getElementById(deviceId).style.border = "";
       this.visible = true;
@@ -122,8 +122,9 @@ export default {
     },
     //弹出指定deviceId marker
     showDeviceMarker(deviceId) {
-      this.visible = false
-      this.$store.commit("getVisible", this.visible)
+      if(!this.$store.state.visible) {
+        this.$store.commit("getVisible", true)
+      }
       let _this = this;
       this.markerArr.filter((equip) => {
         if (equip.equip_uniq_num === deviceId) {

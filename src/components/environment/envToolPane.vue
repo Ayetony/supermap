@@ -4,16 +4,16 @@
         class="pane">
       <li>设备状态:</li>
       <li>
-        <div class="env-color"></div>&nbsp;PM2.5<a>{{ getMarkerById(rect.equip_uniq_num).env.pm25 }}</a>
+        <ColorOption color="#15d81d"/>&nbsp;PM2.5<a>{{ getMarkerById(rect.equip_uniq_num).env.pm25 }}</a>
       </li>
       <li>
-        <div class="env-color"></div>&nbsp;温度<a>{{ getMarkerById(rect.equip_uniq_num).equip_uniq_num }}</a>
+        <ColorOption color="#15d81d"/>&nbsp;温度<a>{{ getMarkerById(rect.equip_uniq_num).equip_uniq_num }}</a>
       </li>
       <li>
-        <div class="env-color"></div>&nbsp;湿度<a>{{ getMarkerById(rect.equip_uniq_num).env.humidity }}</a>
+        <ColorOption color="#15d81d"/>&nbsp;湿度<a>{{ getMarkerById(rect.equip_uniq_num).env.humidity }}</a>
       </li>
       <li>
-        <div class="env-color"></div>&nbsp;风速风向<a>{{ getMarkerById(rect.equip_uniq_num).env.wind }}</a>
+        <ColorOption color="#15d81d"/>&nbsp;风速风向<a>{{ getMarkerById(rect.equip_uniq_num).env.wind }}</a>
       </li>
       <li>
         <div class="env-color"></div>&nbsp;降雨量<a>{{ getMarkerById(rect.equip_uniq_num).env.precipitation }}</a>
@@ -24,8 +24,12 @@
 </template>
 
 <script>
+import ColorOption from '@/components/common/colorOption'
 export default {
   name: "envToolPane",
+  components:{
+    ColorOption
+  },
   props: {
     markerArr: {
       type: Array
@@ -51,7 +55,8 @@ export default {
   },
   methods: {
     getEnvById(envId) {
-      return envId;
+      this.$emit('envMarkerEvent', envId)
+      console.log(envId)
     }
   }
 }
@@ -70,7 +75,7 @@ export default {
   width: 110px;
   height: 135px;
   color: white;
-  z-index: 2147483647;
+  z-index: 2147483646;
   margin-left: 5px;
   position: fixed;
 }

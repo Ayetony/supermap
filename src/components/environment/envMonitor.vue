@@ -1,17 +1,23 @@
 <template>
   <div>
+    <ParkQuery :pageList="markerArr" :showConditionDesc="true"/>
     <Locator :marker-arr="markerArr" :icon-color="iconColor" :columnName="currentColumn"/>
-    <EnvToolPane :markerArr="markerArr"/>
+    <EnvMapPopup :markerArr="markerArr"/>
+    <EnvToolPane :markerArr="markerArr" @envMarkerEvent="showDeviceMarker"/>
   </div>
 </template>
 <script>
 import Locator from '@/components/common/locator'
 import EnvToolPane from "@/components/environment/envToolPane";
+import ParkQuery from  '@/components/video/parkQuery'
+import EnvMapPopup from "@/components/environment/envMapPopup";
 export default {
   name: "envMonitor",
   components: {
     Locator,
-    EnvToolPane
+    EnvToolPane,
+    ParkQuery,
+    EnvMapPopup
   },
   data(){
     return{
@@ -23,7 +29,7 @@ export default {
       },
       markerArr: [
         {
-          name: "植物园",
+          name: "env-植物园",
           erectArea: "本层",
           equip_uniq_num: "CP_R_BM003",
           points: [51.5, -0.09],
@@ -37,7 +43,7 @@ export default {
           }
         },
         {
-          name: "野猪林",
+          name: "env-野猪林",
           erectArea: "本层",
           equip_uniq_num: "CP_R_BM002",
           points: [51.5, -0.19],
@@ -51,7 +57,7 @@ export default {
           }
         },
         {
-          name: "快活林",
+          name: "env-快活林",
           erectArea: "本层",
           equip_uniq_num: "CP_R_BM004",
           points: [51.50, -0.14],
@@ -64,7 +70,7 @@ export default {
             precipitation: '52'
           }
         }, {
-          name: "十字坡",
+          name: "env-十字坡",
           erectArea: "本层",
           equip_uniq_num: "CP_R_BM001",
           points: [51.52, -0.124],
@@ -78,7 +84,7 @@ export default {
           }
         },
         {
-          name: "狮子楼",
+          name: "env-狮子楼",
           erectArea: "本层",
           equip_uniq_num: "CP_R_BM005",
           points: [51.49, -0.06],
@@ -104,11 +110,22 @@ export default {
           }
         }
       }
+    },
+    //弹出指定deviceId marker
+    showDeviceMarker(deviceId) {
+      console.log(this.$store.state.visible)
+      if(!this.$store.state.visible) {
+        this.$store.commit("getVisible", true)
+      }
+      return deviceId;
     }
 
   },
   mounted() {
     this.clearNextInit();
+    if(!this.$store.state.parkShow){
+      this.$store.commit('getParkShow', true);
+    }
     if(this.$store.state.clearMap.envClear){
       this.$store.commit('getEnvClear', false)
     }
