@@ -87,7 +87,6 @@ export default {
       return {};
     },
     getRealTimeInfo() {
-      console.log('realtime')
       if (this.popupVisibleDeviceId && this.showOfRealTime) {
         const realtimeArr = this.markerArr.filter((marker) => {
           if (marker.equip_uniq_num === this.popupVisibleDeviceId) {

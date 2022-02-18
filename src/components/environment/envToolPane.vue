@@ -39,8 +39,18 @@ export default {
     getRects() {
       return JSON.parse(this.$store.state.rectsJson)
     },
-    getMarkerById() {
-      return markerId => {
+    // getMarkerById() {
+    //   return markerId => {
+    //     const markers = this.markerArr.filter((marker) => {
+    //       if (marker.equip_uniq_num === markerId) {
+    //         return marker;
+    //       }
+    //     })
+    //     return markers[0];
+    //   }
+    // }
+    getMarkerById:function () {
+      return function (markerId){
         const markers = this.markerArr.filter((marker) => {
           if (marker.equip_uniq_num === markerId) {
             return marker;
@@ -77,7 +87,7 @@ export default {
   color: white;
   z-index: 2147483646;
   margin-left: 5px;
-  position: fixed;
+  position: absolute;
 }
 
 li {

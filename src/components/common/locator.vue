@@ -123,14 +123,13 @@ export default {
         map.on("moveend", function () {
           const rect = {}
           let boundingClientRect = L.DomUtil.get(equip.equip_uniq_num).getBoundingClientRect();
-          const bodyRect = document.body.getBoundingClientRect();
-          rect.left = boundingClientRect.left - bodyRect.left;
-          rect.top = boundingClientRect.top - bodyRect.top;
+          rect.left = boundingClientRect.left - document.body.scrollLeft;
+          rect.top = boundingClientRect.top - document.body.scrollTop;
           rect.equip_uniq_num = equip.equip_uniq_num;
           if(_this.$store.state.rectsJson !== '') {
             const rectArrFromJson = JSON.parse(_this.$store.state.rectsJson);
             for (let i = 0; i < rectArrFromJson.length; i++) {
-              if (rect.equip_uniq_num === rectArrFromJson[i].equip_uniq_num && rect.left !== rectArrFromJson[i].left && rect.top !== rectArrFromJson[i].top) {
+              if (rect.equip_uniq_num === rectArrFromJson[i].equip_uniq_num && (rect.left !== rectArrFromJson[i].left || rect.top !== rectArrFromJson[i].top)) {
                 rectArrFromJson[i] = rect;
                 _this.$store.dispatch('getRectsJson', JSON.stringify(rectArrFromJson));
                 break;
