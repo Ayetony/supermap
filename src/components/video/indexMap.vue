@@ -1,7 +1,7 @@
 <template>
   <div>
     <ParkQuery :pageList="markerArr" @deviceInfo="showDeviceInfo" :showConditionDesc="false"
-               @deviceMarker="showDeviceMarker"/>
+               @deviceMarker="showDeviceMarkerLocation"/>
     <MapPopup :markerArr="markerArr" :popupWindowDeviceId="popupWindowDeviceId" :warnList="warnList"/>
     <Locator :columnName="currentColumn" :iconColor="iconColor" :markerArr="markerArr"
              @deviceMarkerEvent="getMarkerDeviceId" @popupVisibleEvent.passive="showDeviceInfo"/>
@@ -120,10 +120,10 @@ export default {
       this.$store.commit("getVisible", this.visible)
       this.popupWindowDeviceId = deviceId;
     },
-    //弹出指定deviceId marker
-    showDeviceMarker(deviceId) {
-      if(!this.$store.state.visible) {
-        this.$store.commit("getVisible", true)
+    //弹出指定deviceId marker location
+    showDeviceMarkerLocation(deviceId) {
+      if(this.$store.state.visible) {
+        this.$store.commit("getVisible", false)
       }
       let _this = this;
       this.markerArr.filter((equip) => {

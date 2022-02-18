@@ -40,9 +40,12 @@ export default {
           marker = L.marker(equip.points, {icon: _this.divIconEngine(L, this.iconColor.warnColor, equip)}).addTo(map);
         }
         equip.marker = marker
-        marker.on('click', () => {
-          _this.showPopup(map, equip)
-        })
+        // 只需要绑定indexMap
+        if(this.columnName === 'videoClear') {
+          marker.on('click', () => {
+            _this.showPopup(map, equip)
+          })
+        }
       })
       if (this.columnName === 'envClear') {
         this.initialRectVuex(map)
@@ -81,6 +84,18 @@ export default {
           iconAnchor: [15, 42]
         });
       }
+
+      if (this.columnName === 'broadCastClear') {
+        return L.divIcon({
+          className: 'custom-div-icon',//
+          html: "<div id='" + equip.equip_uniq_num + "'></div>" +
+              "<i style='font-size:45px;color: " + iconColor + ";margin-top: -10px' class='el-icon-s-flag'></i>" +
+              "<p style='margin-top: -5px;width:50px;font-weight: bold;color:" + iconColor + "'>" + (equip.online_status ? '在线状态' : '告警离线状态') + "</p>",
+          iconSize: [30, 42],
+          iconAnchor: [15, 42]
+        });
+      }
+
       if (this.columnName === 'videoClear') {
         return L.divIcon({
           className: 'custom-div-icon',//必须加此className
@@ -146,10 +161,10 @@ export default {
 <style scoped>
 #map {
   position: absolute;
-  margin-left: -1.2%;
-  margin-top: -1.2%;
-  padding-right: 0.8%;
-  width: 87%;
-  height: 100%;
+  left: 15%;
+  top: 60px;
+  width: 85%;
+  height:900px;
+  bottom: 0;
 }
 </style>

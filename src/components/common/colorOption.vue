@@ -5,7 +5,7 @@
 <script>
 export default {
   name: "colorOption",
-  props:['color','marginTop']
+  props:['color','marginTop'],
 }
 </script>
 
