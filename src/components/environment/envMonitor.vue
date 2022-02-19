@@ -3,7 +3,7 @@
     <ParkQuery :pageList="markerArr" :showConditionDesc="true" @deviceInfo="showDeviceInfo"
                @deviceMarker="showDeviceMarkerLocation"/>
     <EnvMapPopup :markerArr="markerArr" :popupVisibleDeviceId="popupVisibleDeviceId"/>
-    <Locator v-if="rects" :columnName="currentColumn" :icon-color="iconColor" :marker-arr="markerArr"/>
+    <Locator v-if="rects" :columnName="currentColumn" :icon-color="iconColor" :markerArr="markerArr"/>
     <EnvToolPane v-for="rect in markerArr"
                  :key="rect.equip_uniq_num"
                  :equipInfo="getEquipInfoById(rect.equip_uniq_num)"
@@ -328,7 +328,12 @@ export default {
       this.markerArr.filter((equip) => {
         if (equip.equip_uniq_num === deviceId) {
           const domMarker = L.DomUtil.get(equip.equip_uniq_num).parentElement;
-          domMarker.style.border = "3px " + (equip.online_status ? this.iconColor.onlineColor : this.iconColor.warnColor) + " dashed"
+          if(domMarker.style.border !== ''){
+            domMarker.style.border = "";
+          }else {
+            domMarker.style.padding = '10px'
+            domMarker.style.border = "3px " + (equip.online_status ? this.iconColor.onlineColor : this.iconColor.warnColor) + " dashed"
+          }
         }
       })
     },

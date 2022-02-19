@@ -4,7 +4,7 @@
                @deviceMarker="showDeviceMarkerLocation"/>
     <MapPopup :markerArr="markerArr" :popupWindowDeviceId="popupWindowDeviceId" :warnList="warnList"/>
     <Locator :columnName="currentColumn" :iconColor="iconColor" :markerArr="markerArr"
-             @deviceMarkerEvent="getMarkerDeviceId" @popupVisibleEvent.passive="showDeviceInfo"/>
+             @deviceMarkerEvent="getMarkerDeviceId" @popupVisibleEvent="showDeviceInfo"/>
   </div>
 </template>
 
@@ -17,7 +17,8 @@ export default {
   name: 'Index',
   components: {
     Locator,
-    ParkQuery, MapPopup
+    ParkQuery,
+    MapPopup
   },
   data() {
     return {
@@ -129,7 +130,11 @@ export default {
       this.markerArr.filter((equip) => {
         if (equip.equip_uniq_num === deviceId) {
           let domMarker = document.getElementById(equip.equip_uniq_num);
-          domMarker.style.border = "3px " + (equip.online_status ? _this.iconColor.onlineColor : _this.iconColor.warnColor).toString() + " dashed"
+          if(document.getElementById(equip.equip_uniq_num).style.border === ""){
+            domMarker.style.border = "3px " + (equip.online_status ? _this.iconColor.onlineColor : _this.iconColor.warnColor).toString() + " dashed"
+          }else {
+            document.getElementById(equip.equip_uniq_num).style.border = "";
+          }
         }
       })
     },

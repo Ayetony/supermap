@@ -1,21 +1,30 @@
 <template>
   <div>
-    <ParkQuery :pageList="markerArr" :showConditionDesc="true" @deviceInfo="showDeviceInfo" @deviceMarker="showDeviceMarkerLocation"/>
-    <Locator :columnName="currentColumn" :icon-color="iconColor" :marker-arr="markerArr"/>
+    <ParkQuery :pageList="markerArr"  @deviceInfo="showDeviceInfo" @deviceMarker="showDeviceMarkerLocation"/>
+    <BroadCastPopup :markerArr="markerArr" :popupVisibleDeviceId="popupVisibleDeviceId"/>
+    <Locator :columnName="currentColumn" :iconColor="iconColor" :markerArr="markerArr" @popupVisibleEvent="showSpeaker"/>
+    <BroadCastPane :popupVisibleDeviceId="popupVisibleDeviceId"/>
+
   </div>
 </template>
 <script>
+import L from 'leaflet'
 import ParkQuery from '@/components/video/parkQuery'
 import Locator from '@/components/common/locator'
+import BroadCastPane from '@/components/broadcast/broadCastPane'
+import BroadCastPopup from '@/components/broadcast/broadCastMapPopup'
 export default {
   name: "BroadCast",
   components:{
     ParkQuery,
-    Locator
+    Locator,
+    BroadCastPopup,
+    BroadCastPane
   },
   data(){
     return {
       currentColumn: 'broadCastClear',
+      popupVisibleDeviceId: '',
       iconColor: {
         warnColor: '#ff0000',
         onlineColor: '#0868e5',
@@ -29,28 +38,28 @@ export default {
           online_status: true
         },
         {
-          name: "野猪林",
+          name: "灵隐寺",
           erectArea: "本层",
           equip_uniq_num: "CP_R_BM002",
           points: [51.53, -0.19],
           online_status: false
         },
         {
-          name: "快活林",
+          name: "清波门",
           erectArea: "本层",
           equip_uniq_num: "CP_R_BM004",
           points: [51.52, -0.14],
           online_status: true
         },
         {
-          name: "十字坡",
+          name: "牡丹亭",
           erectArea: "本层",
           equip_uniq_num: "CP_R_BM001",
           points: [51.52, -0.124],
           online_status: false
         },
         {
-          name: "狮子楼",
+          name: "秋鸣山",
           erectArea: "本层",
           equip_uniq_num: "CP_R_BM005",
           points: [51.49, -0.06],
@@ -60,8 +69,54 @@ export default {
     }
   },
   methods:{
-    showDeviceInfo(){},
-    showDeviceMarkerLocation(){}
+    showDeviceInfo(deviceId){
+      if (!this.$store.state.visible) {
+        this.$store.commit("getVisible", true)
+      }
+      this.popupVisibleDeviceId = deviceId
+    },
+    showSpeaker(deviceId){
+      this.popupVisibleDeviceId = deviceId;
+    },
+    showDeviceMarkerLocation(deviceId){
+      //避免定位图片被遮罩
+      if (!this.$store.state.visible) {
+        this.$store.commit("getVisible", false)
+      }
+      let _this = this;
+      this.markerArr.filter((equip) => {
+        if (equip.equip_uniq_num === deviceId) {
+          const domMarker = L.DomUtil.get(equip.equip_uniq_num);
+          if(document.getElementById(equip.equip_uniq_num).style.border === ""){
+            domMarker.style.border = "3px " + (equip.online_status ? _this.iconColor.onlineColor : _this.iconColor.warnColor).toString() + " dashed"
+          }else {
+            document.getElementById(equip.equip_uniq_num).style.border = "";
+          }
+        }
+      })
+    },
+    clearNextInit() {
+      //清理上一次marker然后初始化
+      for (let clearMapKey in this.$store.state.clearMap) {
+        if (!this.$store.state.clearMap[clearMapKey]) {
+          if (!clearMapKey === this.$store.state.clearMap.envClear) {
+            this.$store.commit('get' + clearMapKey.slice(0, 1).toUpperCase() + clearMapKey.slice(1), true)
+          }
+        }
+      }
+    }
+  },
+  mounted() {
+    this.clearNextInit();
+    if (!this.$store.state.parkShow) {
+      this.$store.commit('getParkShow', true);
+    }
+    if (this.$store.state.visible) {
+      this.$store.commit('getVisible', false);
+    }
+    if (this.$store.state.clearMap.envClear) {
+      this.$store.commit('getBroadCastClear', false)
+    }
   }
 }
 </script>

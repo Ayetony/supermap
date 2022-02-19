@@ -39,6 +39,13 @@ export default {
         } else {
           marker = L.marker(equip.points, {icon: _this.divIconEngine(L, this.iconColor.warnColor, equip)}).addTo(map);
         }
+        if(this.columnName === 'broadCastClear'){
+          marker._icon.id = equip.equip_uniq_num;
+          marker.on('click', () => {
+            // _this.$bus.emit('popupSpeakerId', equip.equip_uniq_num);
+            _this.$emit('popupVisibleEvent', equip.equip_uniq_num);
+          })
+        }
         equip.marker = marker
         // 只需要绑定indexMap
         if (this.columnName === 'videoClear') {
@@ -72,7 +79,6 @@ export default {
       if (!this.$store.state.parkShow && this.$store.state.visible) {
         this.$store.commit('getParkShow', true)
       }
-      document.getElementById(equip.equip_uniq_num).style.border = "";
     },
     // font 图标加 div 样式
     divIconEngine(L, iconColor, equip) {
@@ -88,14 +94,15 @@ export default {
       }
 
       if (this.columnName === 'broadCastClear') {
-        return L.divIcon({
-          className: 'custom-div-icon-broadcast',
-          html: "<div id='" + equip.equip_uniq_num + "'></div>" +
-              "<img src='../../../public/images/speakerGreen.png'/>" +
-              "<p style='margin-top: -5px;width:50px;font-weight: bold;color:" + iconColor + "'>" + (equip.online_status ? '在线状态' : '离线状态') + "</p>",
-          iconSize: [30, 42],
-          iconAnchor: [15, 42]
+        let myIcon = L.icon({
+          iconUrl: equip.online_status?require('../../assets/images/speakerGreen.png'):require('../../assets/images/speakerRed.png'),
+          iconSize: [45, 45],
+          iconAnchor: [22, 94],
+          popupAnchor: [-3, -76],
+          shadowSize: [68, 95],
+          shadowAnchor: [22, 94]
         });
+        return myIcon;
       }
 
       if (this.columnName === 'videoClear') {
@@ -151,7 +158,7 @@ export default {
   },
   mounted() {
     this.leafletInit();
-    if(this.columnName === 'envClear'){
+    if (this.columnName === 'envClear') {
       let rects = [];
       this.markerArr.forEach((equip) => {
         const boundingClientRect = L.DomUtil.get(equip.equip_uniq_num).getBoundingClientRect();

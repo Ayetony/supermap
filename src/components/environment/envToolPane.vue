@@ -45,10 +45,11 @@ export default {
     }
   },
   created() {
+    // 渲染函数是一个this，对于多个组件使用this进行调用绑定，在callback函数内无法完成双向数据修改
     let _this = this;
     _this.$bus.on(this.equip_uniq_num, function (rect) {
       if (rect.equip_uniq_num === _this.equip_uniq_num) {
-        console.log('收到',_this.equip_uniq_num)
+        // console.log('收到',_this.equip_uniq_num)
         _this.left = rect.left;
         _this.right = rect.right;
         _this.bottom = rect.bottom;
@@ -69,7 +70,13 @@ export default {
         }
       }
     }
-
+  },
+  destroyed() {
+    console.log('destroyed')
+    //销毁组件刷新前的视窗位置信息
+    this.$store.commit('getRectsJson','');
+    //解除消息总线的绑定
+    this.$bus.off(this.equip_uniq_num)
   }
 }
 </script>
@@ -107,8 +114,5 @@ a {
   border-radius: 10px;
   background-color: #15d81d;
   padding: 0;
-  /*margin-top: 0px;*/
-  /*background-color: #ff0000;*/
-  /*#15d81d*/
 }
 </style>
