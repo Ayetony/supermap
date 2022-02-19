@@ -41,33 +41,35 @@ export default {
         }
         equip.marker = marker
         // 只需要绑定indexMap
-        if(this.columnName === 'videoClear') {
+        if (this.columnName === 'videoClear') {
           marker.on('click', () => {
             _this.showPopup(map, equip)
           })
         }
       })
       if (this.columnName === 'envClear') {
-        this.initialRectVuex(map)
+        this.initialRectVuexAndMapEvents(map)
       }
       return map
     },
     //巡游取点
     travelBounds(map) {
       const popup = L.popup();
+
       function onMapClick(e) {
         popup.setLatLng(e.latlng)
             .setContent("You clicked the map at " + e.latlng.toString())
             .openOn(map);
       }
+
       map.on('click', onMapClick);
     },
     showPopup(map, equip) {
       this.$store.commit("getVisible", true)
-      if(this.$store.state.visible){
+      if (this.$store.state.visible) {
         this.$emit('popupVisibleEvent', equip.equip_uniq_num);
       }
-      if (!this.$store.state.parkShow&&this.$store.state.visible) {
+      if (!this.$store.state.parkShow && this.$store.state.visible) {
         this.$store.commit('getParkShow', true)
       }
       document.getElementById(equip.equip_uniq_num).style.border = "";
@@ -87,10 +89,10 @@ export default {
 
       if (this.columnName === 'broadCastClear') {
         return L.divIcon({
-          className: 'custom-div-icon',//
+          className: 'custom-div-icon-broadcast',
           html: "<div id='" + equip.equip_uniq_num + "'></div>" +
-              "<i style='font-size:45px;color: " + iconColor + ";margin-top: -10px' class='el-icon-s-flag'></i>" +
-              "<p style='margin-top: -5px;width:50px;font-weight: bold;color:" + iconColor + "'>" + (equip.online_status ? '在线状态' : '告警离线状态') + "</p>",
+              "<img src='../../../public/images/speakerGreen.png'/>" +
+              "<p style='margin-top: -5px;width:50px;font-weight: bold;color:" + iconColor + "'>" + (equip.online_status ? '在线状态' : '离线状态') + "</p>",
           iconSize: [30, 42],
           iconAnchor: [15, 42]
         });
@@ -109,50 +111,61 @@ export default {
       }
       return '';
     },
-    initialRectVuex(map){
+    initialRectVuexAndMapEvents(map) {
       //开局一张图，试着利用boundingClientRect追踪复位（不理想的）
-      let rects = [];
       const _this = this
       this.markerArr.forEach((equip) => {
-        const boundingClientRect = L.DomUtil.get(equip.equip_uniq_num).getBoundingClientRect();
-        const rect = {}
-        rect.left = boundingClientRect.left;
-        rect.top = boundingClientRect.top;
-        rect.equip_uniq_num = equip.equip_uniq_num;
-        rects.push(rect);
         map.on("moveend", function () {
           const rect = {}
           let boundingClientRect = L.DomUtil.get(equip.equip_uniq_num).getBoundingClientRect();
-          rect.left = boundingClientRect.left - document.body.scrollLeft;
-          rect.top = boundingClientRect.top - document.body.scrollTop;
+          rect.left = boundingClientRect.left;
+          rect.top = boundingClientRect.top;
+          rect.bottom = boundingClientRect.bottom;
+          rect.right = boundingClientRect.right
           rect.equip_uniq_num = equip.equip_uniq_num;
-          if(_this.$store.state.rectsJson !== '') {
+          if (_this.$store.state.rectsJson !== '') {
             const rectArrFromJson = JSON.parse(_this.$store.state.rectsJson);
             for (let i = 0; i < rectArrFromJson.length; i++) {
               if (rect.equip_uniq_num === rectArrFromJson[i].equip_uniq_num && (rect.left !== rectArrFromJson[i].left || rect.top !== rectArrFromJson[i].top)) {
                 rectArrFromJson[i] = rect;
                 _this.$store.dispatch('getRectsJson', JSON.stringify(rectArrFromJson));
+                //及时更新dom,发送消息,多个组件根据特定uniq num联动
+                _this.$bus.emit(rect.equip_uniq_num, rect);
                 break;
               }
             }
           }
         })
       })
-      this.$store.dispatch('getRectsJson', JSON.stringify(rects));
     }
   },
-  beforeCreate(){
-    if(sessionStorage.getItem('store')){
+  beforeCreate() {
+    if (sessionStorage.getItem('store')) {
       this.$store.replaceState(Object.assign({}, this.$store.state,
           JSON.parse(sessionStorage.getItem('store'))))
     }
     //session before unload event ,save the state
-    window.addEventListener('beforeunload',()=>{
+    window.addEventListener('beforeunload', () => {
       sessionStorage.setItem('store', JSON.stringify(this.$store.state))
     })
   },
   mounted() {
     this.leafletInit();
+    if(this.columnName === 'envClear'){
+      let rects = [];
+      this.markerArr.forEach((equip) => {
+        const boundingClientRect = L.DomUtil.get(equip.equip_uniq_num).getBoundingClientRect();
+        const rect = {}
+        rect.left = boundingClientRect.left;
+        rect.top = boundingClientRect.top;
+        rect.bottom = boundingClientRect.bottom;
+        rect.right = boundingClientRect.right
+        rect.equip_uniq_num = equip.equip_uniq_num;
+        rects.push(rect);
+      })
+      //首次载入vuex
+      this.$store.dispatch('getRectsJson', JSON.stringify(rects));
+    }
   }
 }
 </script>
@@ -163,7 +176,7 @@ export default {
   left: 15%;
   top: 60px;
   width: 85%;
-  height:900px;
+  height: 900px;
   bottom: 0;
 }
 </style>

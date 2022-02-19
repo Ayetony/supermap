@@ -1,73 +1,75 @@
 <template>
   <div>
-    <ul v-for="rect in getRects" :key="rect.equip_uniq_num" :style="{left: rect.left+'px',top: rect.top+'px'}"
-        class="pane">
+    <ul :style="{left: left+'px',top: top+'px',right: right + 'px',bottom: bottom + 'px'}" class="pane">
       <li>设备状态:</li>
       <li>
-        <ColorOption color="#15d81d"/>&nbsp;PM2.5<a>{{ getMarkerById(rect.equip_uniq_num).env.pm25 }}</a>
+        <ColorOption color="#15d81d"/>&nbsp;PM2.5<a>{{ this.PM25 }}</a>
       </li>
       <li>
-        <ColorOption color="#15d81d"/>&nbsp;温度<a>{{ getMarkerById(rect.equip_uniq_num).equip_uniq_num }}</a>
+        <ColorOption color="#15d81d"/>&nbsp;温度<a>{{ this.temperature }}</a>
       </li>
       <li>
-        <ColorOption color="#15d81d"/>&nbsp;湿度<a>{{ getMarkerById(rect.equip_uniq_num).env.humidity }}</a>
+        <ColorOption color="#15d81d"/>&nbsp;湿度<a>{{ this.humidity }}</a>
       </li>
       <li>
-        <ColorOption color="#15d81d"/>&nbsp;风速风向<a>{{ getMarkerById(rect.equip_uniq_num).env.wind }}</a>
+        <ColorOption color="#15d81d"/>&nbsp;风速风向<a>{{ this.wind }}</a>
       </li>
       <li>
-        <div class="env-color"></div>&nbsp;降雨量<a>{{ getMarkerById(rect.equip_uniq_num).env.precipitation }}</a>
+        <div class="env-color"></div>&nbsp;降雨量<a>{{ this.precipitation }}</a>
       </li>
-      <span style="color: #04c5f6" @click="getEnvById(rect.equip_uniq_num)">更多详情</span>
+      <span style="color: #04c5f6" @click="getEnvById(equip_uniq_num)">更多详情</span>
     </ul>
   </div>
 </template>
 
 <script>
 import ColorOption from '@/components/common/colorOption'
+
 export default {
   name: "envToolPane",
-  components:{
+  components: {
     ColorOption
   },
-  props: {
-    markerArr: {
-      type: Array
-    }
-  },
-  computed: {
-    getRects() {
-      return JSON.parse(this.$store.state.rectsJson)
-    },
-    // getMarkerById() {
-    //   return markerId => {
-    //     const markers = this.markerArr.filter((marker) => {
-    //       if (marker.equip_uniq_num === markerId) {
-    //         return marker;
-    //       }
-    //     })
-    //     return markers[0];
-    //   }
-    // }
-    getMarkerById:function () {
-      return function (markerId){
-        const markers = this.markerArr.filter((marker) => {
-          if (marker.equip_uniq_num === markerId) {
-            return marker;
-          }
-        })
-        return markers[0];
-      }
-    }
-  },
   data() {
-    return {}
+    return {
+      left: this.equipInfo.left,
+      right: this.equipInfo.right,
+      top: this.equipInfo.top,
+      bottom: this.equipInfo.bottom
+    }
   },
+  props: ['PM25', 'temperature', 'humidity', 'wind', 'precipitation', 'equip_uniq_num', 'equipInfo'],
   methods: {
     getEnvById(envId) {
       this.$emit('envMarkerEvent', envId)
-      console.log(envId)
     }
+  },
+  created() {
+    let _this = this;
+    _this.$bus.on(this.equip_uniq_num, function (rect) {
+      if (rect.equip_uniq_num === _this.equip_uniq_num) {
+        console.log('收到',_this.equip_uniq_num)
+        _this.left = rect.left;
+        _this.right = rect.right;
+        _this.bottom = rect.bottom;
+        _this.top = rect.top;
+      }
+    })
+  },
+  mounted() {
+    //首次初始化
+    const rects = JSON.parse(this.$store.state.rectsJson);
+    if(rects){
+      for (let i = 0; i < rects.length; i++) {
+        if(rects[i].equip_uniq_num === this.equip_uniq_num){
+          this.left = rects[i].left;
+          this.right = rects[i].right;
+          this.bottom = rects[i].bottom;
+          this.top = rects[i].top;
+        }
+      }
+    }
+
   }
 }
 </script>
@@ -87,7 +89,7 @@ export default {
   color: white;
   z-index: 2147483646;
   margin-left: 5px;
-  position: absolute;
+  position: fixed;
 }
 
 li {

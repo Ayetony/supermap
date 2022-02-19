@@ -1,9 +1,19 @@
 <template>
   <div>
-    <ParkQuery :pageList="markerArr" :showConditionDesc="true" @deviceInfo="showDeviceInfo" @deviceMarker="showDeviceMarkerLocation"/>
-    <Locator :columnName="currentColumn" :icon-color="iconColor" :marker-arr="markerArr"/>
+    <ParkQuery :pageList="markerArr" :showConditionDesc="true" @deviceInfo="showDeviceInfo"
+               @deviceMarker="showDeviceMarkerLocation"/>
     <EnvMapPopup :markerArr="markerArr" :popupVisibleDeviceId="popupVisibleDeviceId"/>
-    <EnvToolPane :markerArr="markerArr" @envMarkerEvent="showDeviceInfo"/>
+    <Locator v-if="rects" :columnName="currentColumn" :icon-color="iconColor" :marker-arr="markerArr"/>
+    <EnvToolPane v-for="rect in markerArr"
+                 :key="rect.equip_uniq_num"
+                 :equipInfo="getEquipInfoById(rect.equip_uniq_num)"
+                 :equip_uniq_num="rect.equip_uniq_num"
+                 :precipitation="getEquipInfoById(rect.equip_uniq_num).env.precipitation"
+                 :humidity="getEquipInfoById(rect.equip_uniq_num).env.humidity"
+                 :temperature="getEquipInfoById(rect.equip_uniq_num).env.temperature"
+                 :PM25="getEquipInfoById(rect.equip_uniq_num).env.pm25"
+                 :wind="getEquipInfoById(rect.equip_uniq_num).env.wind"
+                 @envMarkerEvent="showDeviceInfo"/>
   </div>
 </template>
 <script>
@@ -25,6 +35,7 @@ export default {
     return {
       currentColumn: 'envClear',
       popupVisibleDeviceId: '',
+      rects:[],
       iconColor: {
         warnColor: '#ff0000',
         onlineColor: '#0868e5',
@@ -49,7 +60,7 @@ export default {
               value: 26,
               unitName: '颗粒物',
               range: '0~500',
-              status: 0 ,
+              status: 0,
             },
             {
               statusName: '温度',
@@ -63,21 +74,21 @@ export default {
               value: 60,
               unitName: '%RH',
               range: '0～1000',
-              status:2,
+              status: 2,
             },
             {
               statusName: '降雨量',
               value: 50,
               unitName: '毫米',
               range: '0～100',
-              status:1,
+              status: 1,
             },
             {
               statusName: '风速',
               value: '东北风一级',
               unitName: '级数',
               range: '0～30',
-              status:0,
+              status: 0,
             }
           ]
         },
@@ -100,7 +111,7 @@ export default {
               value: 26,
               unitName: '颗粒物',
               range: '0~500',
-              status: 0 ,
+              status: 0,
             },
             {
               statusName: '温度',
@@ -114,21 +125,21 @@ export default {
               value: 60,
               unitName: '%RH',
               range: '0～1000',
-              status:1,
+              status: 1,
             },
             {
               statusName: '降雨量',
               value: 50,
               unitName: '毫米',
               range: '0～100',
-              status:2,
+              status: 2,
             },
             {
               statusName: '风速',
               value: '东北风一级',
               unitName: '级数',
               range: '0～30',
-              status:0,
+              status: 0,
             }
           ]
 
@@ -152,7 +163,7 @@ export default {
               value: 26,
               unitName: '颗粒物',
               range: '0~500',
-              status: 0 ,
+              status: 0,
             },
             {
               statusName: '温度',
@@ -166,21 +177,21 @@ export default {
               value: 60,
               unitName: '%RH',
               range: '0～1000',
-              status:2,
+              status: 2,
             },
             {
               statusName: '降雨量',
               value: 50,
               unitName: '毫米',
               range: '0～100',
-              status:2,
+              status: 2,
             },
             {
               statusName: '风速',
               value: '东北风一级',
               unitName: '级数',
               range: '0～30',
-              status:0,
+              status: 0,
             }
           ]
 
@@ -203,7 +214,7 @@ export default {
               value: 26,
               unitName: '颗粒物',
               range: '0~500',
-              status: 0 ,
+              status: 0,
             },
             {
               statusName: '温度',
@@ -217,21 +228,21 @@ export default {
               value: 60,
               unitName: '%RH',
               range: '0～1000',
-              status:2,
+              status: 2,
             },
             {
               statusName: '降雨量',
               value: 50,
               unitName: '毫米',
               range: '0～100',
-              status:0,
+              status: 0,
             },
             {
               statusName: '风速',
               value: '东北风一级',
               unitName: '级数',
               range: '0～30',
-              status:0,
+              status: 0,
             }
           ]
 
@@ -255,7 +266,7 @@ export default {
               value: 26,
               unitName: '颗粒物',
               range: '0~500',
-              status: 0 ,
+              status: 0,
             },
             {
               statusName: '温度',
@@ -269,21 +280,21 @@ export default {
               value: 60,
               unitName: '%RH',
               range: '0～1000',
-              status:2,
+              status: 2,
             },
             {
               statusName: '降雨量',
               value: 50,
               unitName: '毫米',
               range: '0～100',
-              status:2,
+              status: 2,
             },
             {
               statusName: '风速',
               value: '东北风一级',
               unitName: '级数',
               range: '0～30',
-              status:0,
+              status: 0,
             }
           ]
 
@@ -311,17 +322,24 @@ export default {
     },
     //弹出指定deviceId marker location
     showDeviceMarkerLocation(deviceId) {
-      if(!this.$store.state.visible) {
+      if (!this.$store.state.visible) {
         this.$store.commit("getVisible", false)
       }
       this.markerArr.filter((equip) => {
         if (equip.equip_uniq_num === deviceId) {
-          // let domMarker = document.getElementById(equip.equip_uniq_num);
           const domMarker = L.DomUtil.get(equip.equip_uniq_num).parentElement;
-          domMarker.style.border = "3px " + (equip.online_status?this.iconColor.onlineColor:this.iconColor.warnColor) + " dashed"
+          domMarker.style.border = "3px " + (equip.online_status ? this.iconColor.onlineColor : this.iconColor.warnColor) + " dashed"
         }
       })
     },
+    getEquipInfoById(markerId) {
+      const markers = this.markerArr.filter((marker) => {
+        if (marker.equip_uniq_num === markerId) {
+          return marker;
+        }
+      })
+      return markers[0];
+    }
 
   },
   mounted() {
