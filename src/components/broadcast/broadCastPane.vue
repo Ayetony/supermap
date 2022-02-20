@@ -1,9 +1,9 @@
 <template>
-  <div v-show="isSpeakerShow">
+  <div v-show="isSpeakerShow" :style="{left: left+'px',top: top+'px',right: right + 'px',bottom: bottom + 'px'}">
     <ul  class="pane">
       <li>工作状态&nbsp;&nbsp;</li><img src="../../assets/images/speakerLightRed.png"/>
       <li>音量</li>
-      <li class="speaker-progress-bar-outer"><div class="speaker-progress-bar-inner" style="width: 20%;"><span style="margin-left: 18px">80%</span></div></li>
+      <li class="speaker-progress-bar-outer"><div class="speaker-progress-bar-inner" style="width: 20%;"><span style="margin-left: 20px">80%</span></div></li>
       <li style="padding: 20px">当前播放 xxx </li>
     </ul>
     <span style="color: #04c5f6"  @click="getEnvById()">更多详情</span>
@@ -34,13 +34,33 @@ export default {
   },
   methods: {
     getEnvById() {
-      console.log(this.speakerId)
       this.$emit('envMarkerEvent', this.speakerId)
     },
-    initSpeakerPane(showOfPane,popupVisibleDeviceId){
+    initSpeakerPane(showOfPane,speakerId){
+      console.log(showOfPane)
+      console.log(this.speakerId)
       this.showOfSpeakerPane = showOfPane;
-      this.speakerId = popupVisibleDeviceId;
+      this.speakerId = speakerId;
+    },
+    // 自动定位
+    getRectById(){
+      // const boundingClientRect = L.DomUtil.get(this.speakerId).getBoundingClientRect();
+      // this.left = boundingClientRect.left;
+      // this.right = boundingClientRect.right;
+      // this.bottom = boundingClientRect.bottom;
+      // this.top = boundingClientRect.top;
+      // console.log(boundingClientRect)
     }
+  },
+  mounted() {
+    // const _this = this;
+    // this.$bus.on('pushSpeakerMsg',  (boundingClientRect)=>{
+    //   _this.left = boundingClientRect.left;
+    //   _this.right = boundingClientRect.right;
+    //   _this.top = boundingClientRect.top;
+    //   _this.bottom = boundingClientRect.bottom;
+    //   _this.speakerId = boundingClientRect.equip_uniq_num;
+    // })
   }
 }
 </script>
@@ -59,7 +79,7 @@ export default {
   height: 120px;
   color: white;
   z-index: 2147483647;
-  position: fixed;
+  position: absolute;
 }
 li{
   margin-left: -40px;
@@ -69,7 +89,7 @@ img{
   width: 30px;
   height: 30px;
   margin-top: -37px;
-  margin-left: 35px;
+  margin-left: 37px;
   padding: 10px;
 }
 .speaker-progress-bar-outer{
