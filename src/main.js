@@ -15,6 +15,7 @@ Vue.use(VueBus)
 
 const vuexStore = new Vuex.Store({
   state:{
+    changed: false,
     visible : false,
     parkShow: false,
     rectsJson: '',

@@ -1,12 +1,32 @@
 <template>
   <div v-show="getVuexVisible" class="broadCastPopup">
     <BasicPopupFrame/>
-    <div class="content">
-      <div>
+    <div>
+      <div class="content">
         <p v-for="equip_info in getDeviceInfo" :key="equip_info.equip_uniq_num">
           设备名称：{{ equip_info.name }}<br/>
           设备安装区域：{{ equip_info.erectArea }}<br/>
           设备唯一识别编码：{{ equip_info.equip_uniq_num }}<br/>
+          设备名称：{{ equip_info.name }}<br/>
+          设备安装区域：{{ equip_info.erectArea }}<br/>
+          设备唯一识别编码：{{ equip_info.equip_uniq_num }}<br/>
+          设备名称：{{ equip_info.name }}<br/>
+          设备安装区域：{{ equip_info.erectArea }}<br/>
+          设备唯一识别编码：{{ equip_info.equip_uniq_num }}<br/>
+          设备名称：{{ equip_info.name }}<br/>
+          设备安装区域：{{ equip_info.erectArea }}<br/>
+          设备唯一识别编码：{{ equip_info.equip_uniq_num }}<br/>
+          设备安装区域：{{ equip_info.erectArea }}<br/>
+          设备唯一识别编码：{{ equip_info.equip_uniq_num }}<br/>
+          设备名称：{{ equip_info.name }}<br/>
+          设备安装区域：{{ equip_info.erectArea }}<br/>
+          设备唯一识别编码：{{ equip_info.equip_uniq_num }}<br/>
+          设备名称：{{ equip_info.name }}<br/>
+          设备安装区域：{{ equip_info.erectArea }}<br/>
+          设备唯一识别编码：{{ equip_info.equip_uniq_num }}<br/>
+          设备唯一识别编码：{{ equip_info.equip_uniq_num }}<br/>
+          设备名称：{{ equip_info.name }}<br/>
+          设备安装区域：{{ equip_info.erectArea }}<br/>
         </p>
       </div>
     </div>
@@ -69,10 +89,16 @@ export default {
   z-index: 2147483647;
 }
 div > p {
+  margin-top: -30px;
   padding: 45px;
   font-size: 12px;
   color: #e7e7e8;
-  line-height: 25px;
+  line-height: 30px;
   text-align: left;
+  columns: 90px 3;
+}
+.content{
+  border-top: #445dd7 1px solid;
+  margin-top: -60px;
 }
 </style>

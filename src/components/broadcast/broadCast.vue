@@ -8,9 +8,8 @@
     <Locator :columnName="currentColumn"
              :iconColor="iconColor"
              :markerArr="markerArr"
-             @popupSpeakerPane="showSpeaker"
              @closeSpeakerPane="closeSpeakerPane"/>
-    <BroadCastPane ref="speaker"/>
+    <BroadCastPane ref="speaker" @speakerMarkerEvent="showDeviceInfo" :markerArr="markerArr"/>
 
   </div>
 </template>
@@ -43,35 +42,41 @@ export default {
           erectArea: "本层",
           equip_uniq_num: "CP_R_BM003",
           points: [51.5, -0.09],
-          online_status: true
+          online_status: true,
+          volume: 0.2,
         },
         {
           name: "灵隐寺",
           erectArea: "本层",
           equip_uniq_num: "CP_R_BM002",
           points: [51.53, -0.19],
-          online_status: false
+          online_status: false,
+          volume: 0.21,
         },
         {
           name: "清波门",
           erectArea: "本层",
           equip_uniq_num: "CP_R_BM004",
           points: [51.52, -0.14],
-          online_status: true
+          online_status: true,
+          volume: 0.9
         },
         {
           name: "牡丹亭",
           erectArea: "本层",
           equip_uniq_num: "CP_R_BM001",
           points: [51.52, -0.124],
-          online_status: false
+          online_status: false,
+          volume: 0.9
+
         },
         {
           name: "秋鸣山",
           erectArea: "本层",
           equip_uniq_num: "CP_R_BM005",
           points: [51.49, -0.06],
-          online_status: true
+          online_status: true,
+          volume: 0.88
         }
       ]
     }
@@ -79,10 +84,9 @@ export default {
   methods:{
     speakerNextTick(){
       const _this = this
-      // this.$nextTick(()=>{
-      //
-      // })
-      this.$refs.speaker.initSpeakerPane(_this.showOfSpeaker,_this.popupVisibleDeviceId);
+      this.$nextTick(()=>{
+        this.$refs.speaker.initSpeakerPane(_this.showOfSpeaker);
+      })
     },
     showDeviceInfo(deviceId){
       if (!this.$store.state.visible) {
@@ -90,11 +94,13 @@ export default {
       }
       this.popupVisibleDeviceId = deviceId
     },
-    showSpeaker(deviceId){
-      this.showOfSpeaker = true;
-      this.popupVisibleDeviceId = deviceId;
-      this.speakerNextTick();
-    },
+    // pushDataSpeaker(speakerId){
+    //   this.showOfSpeaker = !this.showOfSpeaker;
+    //   this.popupVisibleDeviceId = speakerId;
+    //   if(this.showOfSpeaker){
+    //     this.speakerNextTick();
+    //   }
+    // },
     closeSpeakerPane(){
       if(this.showOfSpeaker){
         this.showOfSpeaker = false;

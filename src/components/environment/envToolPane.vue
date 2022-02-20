@@ -1,5 +1,6 @@
 <template>
   <div>
+    //绑定时不要早div内进行
     <ul :style="{left: left+'px',top: top+'px',right: right + 'px',bottom: bottom + 'px'}" class="pane">
       <li>设备状态:</li>
       <li>

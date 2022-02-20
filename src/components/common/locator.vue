@@ -43,10 +43,9 @@ export default {
           marker._icon.id = equip.equip_uniq_num;
           marker.on('click', () => {
             //消息总线送到兄弟节点
-            // const boundingClientRect = L.DomUtil.get(this.speakerId).getBoundingClientRect();
-            // boundingClientRect.equip_uniq_num = equip.equip_uniq_num;
-            // _this.$bus.emit('pushSpeakerMsg',boundingClientRect);
-            _this.$emit('popupSpeakerPane', equip.equip_uniq_num);
+            const boundingClientRect = L.DomUtil.get(equip.equip_uniq_num).getBoundingClientRect();
+            boundingClientRect.equip_uniq_num = equip.equip_uniq_num;
+            _this.$bus.emit('pushSpeakerMsg',boundingClientRect);
           })
           //点击其他区域则关闭窗口
           map.on('click', function (){
