@@ -2,8 +2,8 @@
   <div>
     <ParkQuery :pageList="markerArr"  @deviceInfo="showDeviceInfo" @deviceMarker="showDeviceMarkerLocation"/>
     <BroadCastPopup :markerArr="markerArr" :popupVisibleDeviceId="popupVisibleDeviceId"/>
-    <Locator :columnName="currentColumn" :iconColor="iconColor" :markerArr="markerArr" @popupVisibleEvent="showSpeaker"/>
-    <BroadCastPane :popupVisibleDeviceId="popupVisibleDeviceId"/>
+    <Locator :columnName="currentColumn" :iconColor="iconColor" :markerArr="markerArr" @popupVisibleEvent="showSpeaker" @closeSpeakerPane="closeSpeakerPane"/>
+    <BroadCastPane ref="speaker"/>
 
   </div>
 </template>
@@ -25,6 +25,7 @@ export default {
     return {
       currentColumn: 'broadCastClear',
       popupVisibleDeviceId: '',
+      showOfSpeaker: false,
       iconColor: {
         warnColor: '#ff0000',
         onlineColor: '#0868e5',
@@ -69,6 +70,11 @@ export default {
     }
   },
   methods:{
+    speakerNextTick(){
+      this.$nextTick(()=>{
+        this.$refs.speaker.initSpeakerPane(this.showOfSpeaker,this.popupVisibleDeviceId);
+      })
+    },
     showDeviceInfo(deviceId){
       if (!this.$store.state.visible) {
         this.$store.commit("getVisible", true)
@@ -76,7 +82,15 @@ export default {
       this.popupVisibleDeviceId = deviceId
     },
     showSpeaker(deviceId){
+      this.showOfSpeaker = true;
       this.popupVisibleDeviceId = deviceId;
+      this.speakerNextTick();
+    },
+    closeSpeakerPane(){
+      if(this.showOfSpeaker){
+        this.showOfSpeaker = false;
+      }
+      this.speakerNextTick();
     },
     showDeviceMarkerLocation(deviceId){
       //避免定位图片被遮罩

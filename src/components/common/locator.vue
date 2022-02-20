@@ -45,6 +45,10 @@ export default {
             // _this.$bus.emit('popupSpeakerId', equip.equip_uniq_num);
             _this.$emit('popupVisibleEvent', equip.equip_uniq_num);
           })
+          //点击其他区域则关闭窗口
+          map.on('click', function (){
+            _this.$emit('closeSpeakerPane');
+          });
         }
         equip.marker = marker
         // 只需要绑定indexMap
@@ -124,6 +128,7 @@ export default {
       this.markerArr.forEach((equip) => {
         map.on("moveend", function () {
           const rect = {}
+          // $store状态与现有状态进行比对，从而是否决定向总线发送消息
           let boundingClientRect = L.DomUtil.get(equip.equip_uniq_num).getBoundingClientRect();
           rect.left = boundingClientRect.left;
           rect.top = boundingClientRect.top;
@@ -158,6 +163,7 @@ export default {
   },
   mounted() {
     this.leafletInit();
+    const _this = this;
     if (this.columnName === 'envClear') {
       let rects = [];
       this.markerArr.forEach((equip) => {
@@ -169,6 +175,8 @@ export default {
         rect.right = boundingClientRect.right
         rect.equip_uniq_num = equip.equip_uniq_num;
         rects.push(rect);
+        _this.$bus.emit(rect.equip_uniq_num, rect);
+        console.log(rect)
       })
       //首次载入vuex
       this.$store.dispatch('getRectsJson', JSON.stringify(rects));

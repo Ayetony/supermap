@@ -59,8 +59,8 @@ export default {
   },
   mounted() {
     //首次初始化
-    const rects = JSON.parse(this.$store.state.rectsJson);
-    if(rects){
+    if(this.$store.state.rectsJson){
+      const rects = JSON.parse(this.$store.state.rectsJson);
       for (let i = 0; i < rects.length; i++) {
         if(rects[i].equip_uniq_num === this.equip_uniq_num){
           this.left = rects[i].left;
@@ -89,7 +89,7 @@ export default {
   text-align: left;
   background-color: #1c1717;
   opacity: 0.65;
-  font-size: 8px;
+  font-size: 12px;
   line-height: 18px;
   width: 110px;
   height: 135px;

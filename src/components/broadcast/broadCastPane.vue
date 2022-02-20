@@ -1,9 +1,12 @@
 <template>
-  <div v-show="true">
+  <div v-show="isSpeakerShow">
     <ul  class="pane">
-      <li>设备状态:</li>
-      <span style="color: #04c5f6" @click="getEnvById(this.popupVisibleDeviceId)">更多详情</span>
+      <li>工作状态&nbsp;&nbsp;</li><img src="../../assets/images/speakerLightRed.png"/>
+      <li>音量</li>
+      <li class="speaker-progress-bar-outer"><div class="speaker-progress-bar-inner" style="width: 20%;"><span style="margin-left: 18px">80%</span></div></li>
+      <li style="padding: 20px">当前播放 xxx </li>
     </ul>
+    <span style="color: #04c5f6"  @click="getEnvById()">更多详情</span>
   </div>
 </template>
 
@@ -19,17 +22,24 @@ export default {
       right: '',
       top: '',
       bottom: '',
-      props:{
-        popupVisibleDeviceId:{
-          type: String
-        }
-      }
+      showOfSpeakerPane: false,
+      speakerId: '',
+      percentage: '90px',
+    }
+  },
+  computed:{
+    isSpeakerShow(){
+      return this.showOfSpeakerPane;
     }
   },
   methods: {
-    getEnvById(equip_uniq_num) {
-      console.log(equip_uniq_num)
-      this.$emit('envMarkerEvent', equip_uniq_num)
+    getEnvById() {
+      console.log(this.speakerId)
+      this.$emit('envMarkerEvent', this.speakerId)
+    },
+    initSpeakerPane(showOfPane,popupVisibleDeviceId){
+      this.showOfSpeakerPane = showOfPane;
+      this.speakerId = popupVisibleDeviceId;
     }
   }
 }
@@ -37,19 +47,42 @@ export default {
 
 <style scoped>
 .pane {
-  margin-top: 45px;
+  margin-top: 160px;
   padding-top: 5px;
   list-style-type: none;
   text-align: left;
   background-color: #1c1717;
-  opacity: 0.65;
-  font-size: 8px;
-  line-height: 18px;
-  width: 110px;
-  height: 135px;
+  opacity: 0.8;
+  font-size: 12px;
+  line-height: 5px;
+  width: 80px;
+  height: 120px;
   color: white;
   z-index: 2147483647;
-  margin-left: 5px;
   position: fixed;
+}
+li{
+  margin-left: -40px;
+  padding: 10px;
+}
+img{
+  width: 30px;
+  height: 30px;
+  margin-top: -37px;
+  margin-left: 35px;
+  padding: 10px;
+}
+.speaker-progress-bar-outer{
+  padding: 0;
+  width: 100%;
+  height: 5px;
+  margin-left: -30px;
+  background-color: #15d81d;
+}
+.speaker-progress-bar-inner{
+  padding: 0;
+  float: right;
+  background: #EBEEF5;
+  height: 5px;
 }
 </style>
