@@ -18,7 +18,7 @@
         </el-table-column>
         <el-table-column label="状态" width="80">
           <template slot-scope="scope">
-            <span :style="{'color':scope.row.online_status?'green':'red'}">{{ scope.row.online_status?'在线':'不在线' }}</span>
+            <span :style="{'color':scope.row.online_status?'green':'red'}">{{ scope.row.online_status?'在线':'离线' }}</span>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="120">

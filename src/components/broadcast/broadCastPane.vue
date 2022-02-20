@@ -119,7 +119,7 @@ export default {
   opacity: 0.8;
   font-size: 12px;
   line-height: 5px;
-  width: 90px;
+  width: 92px;
   height: 130px;
   color: white;
   z-index: 2147483640;
