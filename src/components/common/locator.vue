@@ -42,8 +42,11 @@ export default {
         if(this.columnName === 'broadCastClear'){
           marker._icon.id = equip.equip_uniq_num;
           marker.on('click', () => {
-            // _this.$bus.emit('popupSpeakerId', equip.equip_uniq_num);
-            _this.$emit('popupVisibleEvent', equip.equip_uniq_num);
+            //消息总线送到兄弟节点
+            // const boundingClientRect = L.DomUtil.get(this.speakerId).getBoundingClientRect();
+            // boundingClientRect.equip_uniq_num = equip.equip_uniq_num;
+            // _this.$bus.emit('pushSpeakerMsg',boundingClientRect);
+            _this.$emit('popupSpeakerPane', equip.equip_uniq_num);
           })
           //点击其他区域则关闭窗口
           map.on('click', function (){
@@ -176,7 +179,6 @@ export default {
         rect.equip_uniq_num = equip.equip_uniq_num;
         rects.push(rect);
         _this.$bus.emit(rect.equip_uniq_num, rect);
-        console.log(rect)
       })
       //首次载入vuex
       this.$store.dispatch('getRectsJson', JSON.stringify(rects));

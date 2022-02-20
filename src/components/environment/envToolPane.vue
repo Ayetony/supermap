@@ -72,7 +72,6 @@ export default {
     }
   },
   destroyed() {
-    console.log('destroyed')
     //销毁组件刷新前的视窗位置信息
     this.$store.commit('getRectsJson','');
     //解除消息总线的绑定

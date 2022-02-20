@@ -1,8 +1,15 @@
 <template>
   <div>
-    <ParkQuery :pageList="markerArr"  @deviceInfo="showDeviceInfo" @deviceMarker="showDeviceMarkerLocation"/>
-    <BroadCastPopup :markerArr="markerArr" :popupVisibleDeviceId="popupVisibleDeviceId"/>
-    <Locator :columnName="currentColumn" :iconColor="iconColor" :markerArr="markerArr" @popupVisibleEvent="showSpeaker" @closeSpeakerPane="closeSpeakerPane"/>
+    <ParkQuery :pageList="markerArr"
+               @deviceInfo="showDeviceInfo"
+               @deviceMarker="showDeviceMarkerLocation"/>
+    <BroadCastPopup :markerArr="markerArr"
+                    :popupVisibleDeviceId="popupVisibleDeviceId"/>
+    <Locator :columnName="currentColumn"
+             :iconColor="iconColor"
+             :markerArr="markerArr"
+             @popupSpeakerPane="showSpeaker"
+             @closeSpeakerPane="closeSpeakerPane"/>
     <BroadCastPane ref="speaker"/>
 
   </div>
@@ -71,9 +78,11 @@ export default {
   },
   methods:{
     speakerNextTick(){
-      this.$nextTick(()=>{
-        this.$refs.speaker.initSpeakerPane(this.showOfSpeaker,this.popupVisibleDeviceId);
-      })
+      const _this = this
+      // this.$nextTick(()=>{
+      //
+      // })
+      this.$refs.speaker.initSpeakerPane(_this.showOfSpeaker,_this.popupVisibleDeviceId);
     },
     showDeviceInfo(deviceId){
       if (!this.$store.state.visible) {
