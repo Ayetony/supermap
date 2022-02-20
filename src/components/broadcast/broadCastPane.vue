@@ -9,7 +9,7 @@
         <div :style="{width:(1-volume)*100 + '%'}"
              class="speaker-progress-bar-inner"></div>
       </li>
-      <div style="position: fixed;margin-left: 60px;margin-top: -5px">{{ volume * 100 + '%' }}</div>
+      <div style="position: fixed;margin-left: 60px;margin-top: -50px">{{ volume * 100 + '%' }}</div>
       <li>正在播放：&nbsp;{{ name }}</li>
       <li :style="{color: 'red',marginLeft: playingLeft + 'px'}">{{ name }}</li>
       <span style="color: #93969a;margin-left: 60px" @click="getEnvById()">详情</span>
@@ -119,7 +119,7 @@ export default {
   opacity: 0.8;
   font-size: 12px;
   line-height: 5px;
-  width: 92px;
+  width: 90px;
   height: 130px;
   color: white;
   z-index: 2147483640;

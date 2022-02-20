@@ -22,11 +22,7 @@
           设备安装区域：{{ equip_info.erectArea }}<br/>
           设备唯一识别编码：{{ equip_info.equip_uniq_num }}<br/>
           设备名称：{{ equip_info.name }}<br/>
-          设备安装区域：{{ equip_info.erectArea }}<br/>
-          设备唯一识别编码：{{ equip_info.equip_uniq_num }}<br/>
-          设备唯一识别编码：{{ equip_info.equip_uniq_num }}<br/>
-          设备名称：{{ equip_info.name }}<br/>
-          设备安装区域：{{ equip_info.erectArea }}<br/>
+
         </p>
       </div>
     </div>
