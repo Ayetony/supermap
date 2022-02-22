@@ -21,4 +21,5 @@ npm run lint
 ```
 
 ### 只是一个 demo 
-参考:leaflet,mapbox,iclient-leaflet from supermap 
+参考:leaflet ｜ mapbox | vuex vueBus
+
