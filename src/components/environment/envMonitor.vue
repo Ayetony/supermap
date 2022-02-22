@@ -4,21 +4,20 @@
                @deviceMarker="showDeviceMarkerLocation"/>
     <EnvMapPopup :markerArr="markerArr" :popupVisibleDeviceId="popupVisibleDeviceId"/>
     <Locator v-if="rects" :columnName="currentColumn" :icon-color="iconColor" :markerArr="markerArr"/>
-    <EnvToolPane v-for="rect in markerArr"
-                 :key="rect.equip_uniq_num"
-                 :equipInfo="getEquipInfoById(rect.equip_uniq_num)"
-                 :equip_uniq_num="rect.equip_uniq_num"
-                 :precipitation="getEquipInfoById(rect.equip_uniq_num).env.precipitation"
-                 :humidity="getEquipInfoById(rect.equip_uniq_num).env.humidity"
-                 :temperature="getEquipInfoById(rect.equip_uniq_num).env.temperature"
-                 :PM25="getEquipInfoById(rect.equip_uniq_num).env.pm25"
-                 :wind="getEquipInfoById(rect.equip_uniq_num).env.wind"
-                 @envMarkerEvent="showDeviceInfo"/>
+<!--    <EnvToolPane v-for="rect in markerArr"-->
+<!--                 :key="rect.equip_uniq_num"-->
+<!--                 :equipInfo="getEquipInfoById(rect.equip_uniq_num)"-->
+<!--                 :equip_uniq_num="rect.equip_uniq_num"-->
+<!--                 :precipitation="getEquipInfoById(rect.equip_uniq_num).env.precipitation"-->
+<!--                 :humidity="getEquipInfoById(rect.equip_uniq_num).env.humidity"-->
+<!--                 :temperature="getEquipInfoById(rect.equip_uniq_num).env.temperature"-->
+<!--                 :PM25="getEquipInfoById(rect.equip_uniq_num).env.pm25"-->
+<!--                 :wind="getEquipInfoById(rect.equip_uniq_num).env.wind"-->
+<!--                 @envMarkerEvent="showDeviceInfo"/>-->
   </div>
 </template>
 <script>
 import Locator from '@/components/common/locator'
-import EnvToolPane from "@/components/environment/envToolPane";
 import ParkQuery from '@/components/common/parkQuery'
 import EnvMapPopup from "@/components/environment/envMapPopup";
 import L from "leaflet"
@@ -27,7 +26,6 @@ export default {
   name: "envMonitor",
   components: {
     Locator,
-    EnvToolPane,
     ParkQuery,
     EnvMapPopup
   },

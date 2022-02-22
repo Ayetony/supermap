@@ -5,6 +5,7 @@
 
 <script>
 import L from "leaflet";
+// import {Point} from "leaflet/dist/leaflet-src.esm";
 
 export default {
   name: "locator",
@@ -35,34 +36,49 @@ export default {
       this.markerArr.forEach((equip) => {
         let marker;
         if (equip.online_status) {
-          marker = L.marker(equip.points, {icon: _this.divIconEngine(L, this.iconColor.onlineColor, equip)}).addTo(map);
+          marker = L.marker(equip.points, {icon: _this.divIconEngine(L, this.iconColor.onlineColor, equip)}).addTo(map)
         } else {
-          marker = L.marker(equip.points, {icon: _this.divIconEngine(L, this.iconColor.warnColor, equip)}).addTo(map);
+          marker = L.marker(equip.points, {icon: _this.divIconEngine(L, this.iconColor.warnColor, equip)}).addTo(map)
+        }
+        if(this.columnName === 'envClear'){
+          console.log('hello')
+          marker.bindPopup('hi green',
+              {autoClose: false,
+            closeButton: false,
+            autoPan:false,
+            closeOnEscapeKey:false,
+            closeOnClick:false,
+                minWidth:110,
+                minHeight:135,
+          })
+          // marker.openPopup(equip.points)
+          marker.openPopup()
+          marker.off()
         }
         if(this.columnName === 'broadCastClear'){
-          marker._icon.id = equip.equip_uniq_num;
-          marker.on('click', () => {
-            //消息总线送到兄弟节点
-            const boundingClientRect = L.DomUtil.get(equip.equip_uniq_num).getBoundingClientRect();
-            boundingClientRect.equip_uniq_num = equip.equip_uniq_num;
-            _this.$bus.emit('pushSpeakerMsg',boundingClientRect);
-          })
-          //点击其他区域则关闭窗口
-          map.on('click', function (){
-            _this.$emit('closeSpeakerPane');
-          });
+          // marker._icon.id = equip.equip_uniq_num;
+          // marker.on('click', () => {
+          //   //消息总线送到兄弟节点
+          //   const boundingClientRect = L.DomUtil.get(equip.equip_uniq_num).getBoundingClientRect();
+          //   boundingClientRect.equip_uniq_num = equip.equip_uniq_num;
+          //   _this.$bus.emit('pushSpeakerMsg',boundingClientRect);
+          // })
+          // //点击其他区域则关闭窗口
+          // map.on('click', function (){
+          //   _this.$emit('closeSpeakerPane');
+          // });
         }
-        equip.marker = marker
         // 只需要绑定indexMap
         if (this.columnName === 'videoClear') {
+          equip.marker = marker
           marker.on('click', () => {
             _this.showPopup(map, equip)
           })
         }
       })
-      if (this.columnName === 'envClear') {
-        this.initialRectVuexAndMapEvents(map)
-      }
+      // if (this.columnName === 'envClear') {
+      //   this.initialRectVuexAndMapEvents(map)
+      // }
       return map
     },
     //巡游取点
@@ -87,7 +103,7 @@ export default {
       }
     },
     // font 图标加 div 样式
-    divIconEngine(L, iconColor, equip) {
+    divIconEngine(L,iconColor, equip) {
       if (this.columnName === 'envClear') {
         return L.divIcon({
           className: 'custom-div-icon',//必须加此className
