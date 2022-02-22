@@ -1,4 +1,4 @@
-# supermap
+# supermap learn demo
 
 ## Project setup
 ```
@@ -20,5 +20,6 @@ npm run build
 npm run lint
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### 只是一个 demo 
+参考:leaflet ｜ mapbox | vuex vueBus
+
