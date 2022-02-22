@@ -15,7 +15,7 @@
 </template>
 <script>
 import L from 'leaflet'
-import ParkQuery from '@/components/video/parkQuery'
+import ParkQuery from '@/components/common/parkQuery'
 import Locator from '@/components/common/locator'
 import BroadCastPane from '@/components/broadcast/broadCastPane'
 import BroadCastPopup from '@/components/broadcast/broadCastMapPopup'

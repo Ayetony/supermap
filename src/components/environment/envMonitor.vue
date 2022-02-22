@@ -19,7 +19,7 @@
 <script>
 import Locator from '@/components/common/locator'
 import EnvToolPane from "@/components/environment/envToolPane";
-import ParkQuery from '@/components/video/parkQuery'
+import ParkQuery from '@/components/common/parkQuery'
 import EnvMapPopup from "@/components/environment/envMapPopup";
 import L from "leaflet"
 

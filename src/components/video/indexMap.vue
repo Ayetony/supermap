@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import ParkQuery from "@/components/video/parkQuery";
+import ParkQuery from "@/components/common/parkQuery";
 import MapPopup from "@/components/video/mapPopup"
 import Locator from '@/components/common/locator'
 
