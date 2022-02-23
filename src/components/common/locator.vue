@@ -5,7 +5,7 @@
 
 <script>
 import L from "leaflet";
-// import {Point} from "leaflet/dist/leaflet-src.esm";
+import lodash from "lodash";
 
 export default {
   name: "locator",
@@ -15,6 +15,8 @@ export default {
           'contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
       videoUrl: 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}',
       token: "pk.eyJ1IjoibWlhb2RheWUiLCJhIjoiY2t6Z25hMnpmM3F3bjJvcHZ0MGtrczlwMSJ9.85LKKEVoAWrXdZXIh9Vfcw",
+      imgRedURL: require("../../assets/images/speakerLightRed.png"),
+      imgGreenURL: require("../../assets/images/speakerLightGreen.png"), // default
     }
   },
   props: ['markerArr', 'iconColor', 'columnName'],
@@ -40,33 +42,101 @@ export default {
         } else {
           marker = L.marker(equip.points, {icon: _this.divIconEngine(L, this.iconColor.warnColor, equip)}).addTo(map)
         }
-        if(this.columnName === 'envClear'){
-          console.log('hello')
-          marker.bindPopup('hi green',
-              {autoClose: false,
-            closeButton: false,
-            autoPan:false,
-            closeOnEscapeKey:false,
-            closeOnClick:false,
-                minWidth:110,
-                minHeight:135,
-          })
-          // marker.openPopup(equip.points)
+        if (this.columnName === 'envClear') {
+          marker.bindPopup('',
+              {
+                autoClose: false,
+                closeButton: false,
+                autoPan: false,
+                closeOnEscapeKey: false,
+                closeOnClick: false,
+                minWidth: 110,
+                minHeight: 135
+              })
+          //打开popup保持open状态
           marker.openPopup()
+          //去掉toggle事件
           marker.off()
+          const elements = document.getElementsByClassName('leaflet-popup-tip');
+          if (elements.length > 0) {
+            for (let element of elements) {
+              L.DomUtil.removeClass(element, 'leaflet-popup-tip')
+            }
+          }
+          let popupDom = L.DomUtil.get(equip.equip_uniq_num)
+          popupDom.removeAttribute('id')
+          let htmlDiv = popupDom.innerHTML
+          L.DomUtil.remove(popupDom)
+          marker.getPopup().setContent(htmlDiv)
+          marker.getPopup().getElement().style.marginLeft = '110px';
+          // 修改popup默认样式
+          marker.getPopup().getElement().children[0].style.padding = '0';
+          marker.getPopup().getElement().children[0].style.border = '0';
+          marker.getPopup().getElement().children[0].style.width = '110';
+          marker.getPopup().getElement().children[0].style.background = '#1c1717';
+          marker.getPopup().getElement().children[0].style.opacity = '0.65';
+          marker.getPopup().getElement().children[0].style.color = 'white';
+          // content 外边框置零
+          marker.getPopup().getElement().children[0].children[0].style.margin = '0';
+
+          let detailEle = L.DomUtil.get(equip.equip_uniq_num + 'detail');
+          L.DomEvent.on(detailEle, 'click', function () {
+            _this.$bus.emit('envMarkerEvent', equip.equip_uniq_num)
+          }, L.DomEvent.stop)
         }
-        if(this.columnName === 'broadCastClear'){
-          // marker._icon.id = equip.equip_uniq_num;
-          // marker.on('click', () => {
-          //   //消息总线送到兄弟节点
-          //   const boundingClientRect = L.DomUtil.get(equip.equip_uniq_num).getBoundingClientRect();
-          //   boundingClientRect.equip_uniq_num = equip.equip_uniq_num;
-          //   _this.$bus.emit('pushSpeakerMsg',boundingClientRect);
-          // })
-          // //点击其他区域则关闭窗口
-          // map.on('click', function (){
-          //   _this.$emit('closeSpeakerPane');
-          // });
+
+        if (this.columnName === 'broadCastClear') {
+          marker._icon.id = equip.equip_uniq_num;
+          marker.bindPopup('',
+              {
+                autoClose: false,
+                closeButton: false,
+                autoPan: false,
+                closeOnEscapeKey: false,
+                keepInView: true,
+                minWidth: 92,
+                minHeight: 130
+              })
+          const elements = document.getElementsByClassName('leaflet-popup-tip');
+          if (elements.length > 0) {
+            for (let element of elements) {
+              L.DomUtil.removeClass(element, 'leaflet-popup-tip')
+            }
+          }
+          marker.on('click', () => {
+            _this.$bus.emit('pushSpeakerMsg', equip.equip_uniq_num);
+            //此id是一个固定常量即可
+            let popupDom = L.DomUtil.get("equip_speaker_Id")
+            popupDom.getElementsByTagName('img')[0].setAttribute('src', equip.online_status?this.imgGreenURL:this.imgRedURL)
+
+
+            let htmlDiv = popupDom.innerHTML
+            htmlDiv = lodash.replace(htmlDiv, 'id="speakerdetail"', "id='" + equip.equip_uniq_num + "'")
+
+            marker.getPopup().setContent(htmlDiv)
+            marker.getPopup().getElement().style.opacity = '';
+            marker.getPopup().getElement().style.marginTop = '-45px';
+            // 修改popup默认样式
+            marker.getPopup().getElement().children[0].style.padding = '0';
+            marker.getPopup().getElement().children[0].style.border = '0';
+            marker.getPopup().getElement().children[0].style.width = '110';
+            marker.getPopup().getElement().children[0].style.background = '#1c1717';
+            marker.getPopup().getElement().children[0].style.opacity = '0.8';
+            marker.getPopup().getElement().children[0].style.color = 'white';
+            // content 外边框置零
+            marker.getPopup().getElement().children[0].children[0].style.margin = '0';
+            marker.openPopup()
+          })
+          L.DomEvent.addListener(L.DomUtil.get(equip.equip_uniq_num), 'click', function () {
+            _this.$bus.emit('broadCastMarkerEvent', equip.equip_uniq_num)
+            //消息总线送到兄弟节点
+          }, L.DomEvent.stop)
+
+          //点击其他区域则关闭窗口
+          map.on('click', function () {
+            _this.$emit('closeSpeakerPane');
+          });
+
         }
         // 只需要绑定indexMap
         if (this.columnName === 'videoClear') {
@@ -76,9 +146,6 @@ export default {
           })
         }
       })
-      // if (this.columnName === 'envClear') {
-      //   this.initialRectVuexAndMapEvents(map)
-      // }
       return map
     },
     //巡游取点
@@ -103,11 +170,11 @@ export default {
       }
     },
     // font 图标加 div 样式
-    divIconEngine(L,iconColor, equip) {
+    divIconEngine(L, iconColor, equip) {
       if (this.columnName === 'envClear') {
         return L.divIcon({
           className: 'custom-div-icon',//必须加此className
-          html: "<div id='" + equip.equip_uniq_num + "'></div>" +
+          html: "<div id='" + equip.equip_uniq_num + "icon" + "'></div>" +
               "<i style='font-size:45px;color: " + iconColor + ";margin-top: -10px' class='el-icon-s-flag'></i>" +
               "<p style='margin-top: -5px;width:50px;font-weight: bold;color:" + iconColor + "'>" + (equip.online_status ? '在线状态' : '告警离线状态') + "</p>",
           iconSize: [30, 42],
@@ -117,12 +184,12 @@ export default {
 
       if (this.columnName === 'broadCastClear') {
         let myIcon = L.icon({
-          iconUrl: equip.online_status?require('../../assets/images/speakerGreen.png'):require('../../assets/images/speakerRed.png'),
+          iconUrl: equip.online_status ? require('../../assets/images/speakerGreen.png') : require('../../assets/images/speakerRed.png'),
           iconSize: [45, 45],
           iconAnchor: [22, 94],
           popupAnchor: [-3, -76],
           shadowSize: [68, 95],
-          shadowAnchor: [22, 94]
+          shadowAnchor: [22, 94],
         });
         return myIcon;
       }
@@ -139,34 +206,6 @@ export default {
         });
       }
       return '';
-    },
-    initialRectVuexAndMapEvents(map) {
-      //开局一张图，试着利用boundingClientRect追踪复位（不理想的）
-      const _this = this
-      this.markerArr.forEach((equip) => {
-        map.on("moveend", function () {
-          const rect = {}
-          // $store状态与现有状态进行比对，从而是否决定向总线发送消息
-          let boundingClientRect = L.DomUtil.get(equip.equip_uniq_num).getBoundingClientRect();
-          rect.left = boundingClientRect.left;
-          rect.top = boundingClientRect.top;
-          rect.bottom = boundingClientRect.bottom;
-          rect.right = boundingClientRect.right
-          rect.equip_uniq_num = equip.equip_uniq_num;
-          if (_this.$store.state.rectsJson !== '') {
-            const rectArrFromJson = JSON.parse(_this.$store.state.rectsJson);
-            for (let i = 0; i < rectArrFromJson.length; i++) {
-              if (rect.equip_uniq_num === rectArrFromJson[i].equip_uniq_num && (rect.left !== rectArrFromJson[i].left || rect.top !== rectArrFromJson[i].top)) {
-                rectArrFromJson[i] = rect;
-                _this.$store.dispatch('getRectsJson', JSON.stringify(rectArrFromJson));
-                //及时更新dom,发送消息,多个组件根据特定uniq num联动
-                _this.$bus.emit(rect.equip_uniq_num, rect);
-                break;
-              }
-            }
-          }
-        })
-      })
     }
   },
   beforeCreate() {
@@ -181,23 +220,6 @@ export default {
   },
   mounted() {
     this.leafletInit();
-    const _this = this;
-    if (this.columnName === 'envClear') {
-      let rects = [];
-      this.markerArr.forEach((equip) => {
-        const boundingClientRect = L.DomUtil.get(equip.equip_uniq_num).getBoundingClientRect();
-        const rect = {}
-        rect.left = boundingClientRect.left;
-        rect.top = boundingClientRect.top;
-        rect.bottom = boundingClientRect.bottom;
-        rect.right = boundingClientRect.right
-        rect.equip_uniq_num = equip.equip_uniq_num;
-        rects.push(rect);
-        _this.$bus.emit(rect.equip_uniq_num, rect);
-      })
-      //首次载入vuex
-      this.$store.dispatch('getRectsJson', JSON.stringify(rects));
-    }
   }
 }
 </script>

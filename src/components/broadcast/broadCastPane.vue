@@ -1,18 +1,26 @@
 <template>
-  <div>
-    <ul v-show="showOfSpeakerPane"
-        :style="{left: left+'px',top: top+'px',right: right + 'px',bottom: bottom + 'px'}" class="pane">
+  <div v-show="showOfSpeakerPane" id="equip_speaker_Id">
+    <ul style="padding-top: 5px;
+        list-style-type: none;
+        text-align: left;
+        opacity: 0.8;
+        font-size: 12px;
+        line-height: 5px;
+        width: 92px;
+        height: 130px;
+        color: white;position: relative">
       <li>工作状态&nbsp;&nbsp;</li>
       <img :src="imgURL"/>
       <li>音量</li>
-      <li class="speaker-progress-bar-outer">
-        <div :style="{width:(1-volume)*100 + '%'}"
-             class="speaker-progress-bar-inner"></div>
+      <li style="  padding: 0;width: 100%;height: 5px;margin-left: -35px;background-color: #15d81d;">
+        <div :style="{width:(1-this.volume)*100 + '%'}"
+             style="  padding: 0;float: right;background: #EBEEF5;height: 5px;"></div>
       </li>
       <div style="position: fixed;margin-left: 60px;margin-top: -5px">{{ volume * 100 + '%' }}</div>
       <li>正在播放：&nbsp;{{ name }}</li>
       <li :style="{color: 'red',marginLeft: playingLeft + 'px'}">{{ name }}</li>
-      <span style="color: #93969a;margin-left: 60px" @click="getEnvById()">详情</span>
+      <!--   id 不需要多变的id   -->
+      <span style="color: #04c5f6;margin-left: 60px" id="speakerdetail">详情</span>
     </ul>
   </div>
 </template>
@@ -31,10 +39,6 @@ export default {
     return {
       loop: true,
       distance: -45,
-      left: 0,
-      right: 0,
-      top: 0,
-      bottom: 0,
       showOfSpeakerPane: false,
       speakerId: '',
       percentage: '90px',
@@ -51,7 +55,7 @@ export default {
         return -45;
       } else {
         const _this = this;
-        // eslint-disable-next-line vue/no-side-effects-in-computed-properties,vue/no-async-in-computed-properties
+        // eslint-disable-next-line vue/no-async-in-computed-properties
         setTimeout(() => {
           if (_this.distance >= -45 && this.loop) {
             if (_this.distance === 35) {
@@ -93,38 +97,17 @@ export default {
   },
   created() {
     const _this = this;
-    this.$bus.on('pushSpeakerMsg', (boundingClientRect) => {
-      _this.showOfSpeakerPane = !_this.showOfSpeakerPane;
-      if (_this.showOfSpeakerPane) {
-        _this.left = boundingClientRect.left;
-        _this.right = boundingClientRect.right;
-        _this.top = boundingClientRect.top;
-        _this.bottom = boundingClientRect.bottom;
-        _this.speakerId = boundingClientRect.equip_uniq_num;
+    this.$bus.on('pushSpeakerMsg', (equip_uniq_num) => {
+        _this.showOfSpeakerPane = true;
+        _this.speakerId = equip_uniq_num;
         _this.getSpeakerInfo(_this.speakerId)
-      }
     })
+
   }
 }
 </script>
 
 <style scoped>
-.pane {
-  margin-left: 45px;
-  margin-top: -80px;
-  padding-top: 5px;
-  list-style-type: none;
-  text-align: left;
-  background-color: #1c1717;
-  opacity: 0.8;
-  font-size: 12px;
-  line-height: 5px;
-  width: 92px;
-  height: 130px;
-  color: white;
-  z-index: 2147483640;
-  position: absolute;
-}
 
 li {
   margin-left: -45px;
@@ -137,20 +120,5 @@ img {
   margin-top: -35px;
   margin-left: 30px;
   padding: 5px;
-}
-
-.speaker-progress-bar-outer {
-  padding: 0;
-  width: 100%;
-  height: 5px;
-  margin-left: -35px;
-  background-color: #15d81d;
-}
-
-.speaker-progress-bar-inner {
-  padding: 0;
-  float: right;
-  background: #EBEEF5;
-  height: 5px;
 }
 </style>

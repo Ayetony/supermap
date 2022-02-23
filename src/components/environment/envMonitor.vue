@@ -4,16 +4,15 @@
                @deviceMarker="showDeviceMarkerLocation"/>
     <EnvMapPopup :markerArr="markerArr" :popupVisibleDeviceId="popupVisibleDeviceId"/>
     <Locator v-if="rects" :columnName="currentColumn" :icon-color="iconColor" :markerArr="markerArr"/>
-<!--    <EnvToolPane v-for="rect in markerArr"-->
-<!--                 :key="rect.equip_uniq_num"-->
-<!--                 :equipInfo="getEquipInfoById(rect.equip_uniq_num)"-->
-<!--                 :equip_uniq_num="rect.equip_uniq_num"-->
-<!--                 :precipitation="getEquipInfoById(rect.equip_uniq_num).env.precipitation"-->
-<!--                 :humidity="getEquipInfoById(rect.equip_uniq_num).env.humidity"-->
-<!--                 :temperature="getEquipInfoById(rect.equip_uniq_num).env.temperature"-->
-<!--                 :PM25="getEquipInfoById(rect.equip_uniq_num).env.pm25"-->
-<!--                 :wind="getEquipInfoById(rect.equip_uniq_num).env.wind"-->
-<!--                 @envMarkerEvent="showDeviceInfo"/>-->
+    <EnvToolPane v-for="rect in markerArr"
+                 :key="rect.equip_uniq_num"
+                 :equipInfo="getEquipInfoById(rect.equip_uniq_num)"
+                 :equip_uniq_num="rect.equip_uniq_num"
+                 :precipitation="getEquipInfoById(rect.equip_uniq_num).env.precipitation"
+                 :humidity="getEquipInfoById(rect.equip_uniq_num).env.humidity"
+                 :temperature="getEquipInfoById(rect.equip_uniq_num).env.temperature"
+                 :PM25="getEquipInfoById(rect.equip_uniq_num).env.pm25"
+                 :wind="getEquipInfoById(rect.equip_uniq_num).env.wind"/>
   </div>
 </template>
 <script>
@@ -21,13 +20,15 @@ import Locator from '@/components/common/locator'
 import ParkQuery from '@/components/common/parkQuery'
 import EnvMapPopup from "@/components/environment/envMapPopup";
 import L from "leaflet"
+import EnvToolPane from '@/components/environment/envToolPane'
 
 export default {
   name: "envMonitor",
   components: {
     Locator,
     ParkQuery,
-    EnvMapPopup
+    EnvMapPopup,
+    EnvToolPane
   },
   data() {
     return {
@@ -313,6 +314,7 @@ export default {
     },
     //弹出指定deviceId marker info
     showDeviceInfo(deviceId) {
+      console.log(deviceId)
       if (!this.$store.state.visible) {
         this.$store.commit("getVisible", true)
       }
@@ -325,7 +327,7 @@ export default {
       }
       this.markerArr.filter((equip) => {
         if (equip.equip_uniq_num === deviceId) {
-          const domMarker = L.DomUtil.get(equip.equip_uniq_num).parentElement;
+          const domMarker = L.DomUtil.get(equip.equip_uniq_num+"icon").parentElement;
           if(domMarker.style.border !== ''){
             domMarker.style.border = "";
           }else {
@@ -356,14 +358,16 @@ export default {
     if (this.$store.state.clearMap.envClear) {
       this.$store.commit('getEnvClear', false)
     }
+    //bus for whom device info
+    const _this = this
+    this.$bus.on('envMarkerEvent',function (deviceId){
+      _this.showDeviceInfo(deviceId);
+    })
   },
   beforeDestroy() {
     if (this.$store.state.parkShow) {
       this.$store.commit('getParkShow', false);
     }
-    this.markerArr.forEach((marker) => {
-      marker.marker.remove();
-    })
   }
 }
 </script>

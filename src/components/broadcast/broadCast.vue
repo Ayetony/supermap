@@ -9,7 +9,7 @@
              :iconColor="iconColor"
              :markerArr="markerArr"
              @closeSpeakerPane="closeSpeakerPane"/>
-    <BroadCastPane ref="speaker" @speakerMarkerEvent="showDeviceInfo" :markerArr="markerArr"/>
+    <BroadCastPane ref="speaker" :markerArr="markerArr" @speakerMarkerEvent="showDeviceInfo"/>
 
   </div>
 </template>
@@ -19,15 +19,16 @@ import ParkQuery from '@/components/common/parkQuery'
 import Locator from '@/components/common/locator'
 import BroadCastPane from '@/components/broadcast/broadCastPane'
 import BroadCastPopup from '@/components/broadcast/broadCastMapPopup'
+
 export default {
   name: "BroadCast",
-  components:{
+  components: {
     ParkQuery,
     Locator,
     BroadCastPopup,
     BroadCastPane
   },
-  data(){
+  data() {
     return {
       currentColumn: 'broadCastClear',
       popupVisibleDeviceId: '',
@@ -81,33 +82,26 @@ export default {
       ]
     }
   },
-  methods:{
-    speakerNextTick(){
+  methods: {
+    speakerNextTick() {
       const _this = this
-      this.$nextTick(()=>{
+      this.$nextTick(() => {
         this.$refs.speaker.initSpeakerPane(_this.showOfSpeaker);
       })
     },
-    showDeviceInfo(deviceId){
+    showDeviceInfo(deviceId) {
       if (!this.$store.state.visible) {
         this.$store.commit("getVisible", true)
       }
       this.popupVisibleDeviceId = deviceId
     },
-    // pushDataSpeaker(speakerId){
-    //   this.showOfSpeaker = !this.showOfSpeaker;
-    //   this.popupVisibleDeviceId = speakerId;
-    //   if(this.showOfSpeaker){
-    //     this.speakerNextTick();
-    //   }
-    // },
-    closeSpeakerPane(){
-      if(this.showOfSpeaker){
+    closeSpeakerPane() {
+      if (this.showOfSpeaker) {
         this.showOfSpeaker = false;
       }
       this.speakerNextTick();
     },
-    showDeviceMarkerLocation(deviceId){
+    showDeviceMarkerLocation(deviceId) {
       //避免定位图片被遮罩
       if (!this.$store.state.visible) {
         this.$store.commit("getVisible", false)
@@ -116,9 +110,9 @@ export default {
       this.markerArr.filter((equip) => {
         if (equip.equip_uniq_num === deviceId) {
           const domMarker = L.DomUtil.get(equip.equip_uniq_num);
-          if(document.getElementById(equip.equip_uniq_num).style.border === ""){
+          if (document.getElementById(equip.equip_uniq_num).style.border === "") {
             domMarker.style.border = "3px " + (equip.online_status ? _this.iconColor.onlineColor : _this.iconColor.warnColor).toString() + " dashed"
-          }else {
+          } else {
             document.getElementById(equip.equip_uniq_num).style.border = "";
           }
         }
@@ -146,6 +140,11 @@ export default {
     if (this.$store.state.clearMap.envClear) {
       this.$store.commit('getBroadCastClear', false)
     }
+    const _this = this
+    this.$bus.on('broadCastMarkerEvent', function (equip_uniq_num) {
+      console.log(equip_uniq_num)
+      _this.showDeviceInfo(equip_uniq_num);
+    })
   }
 }
 </script>
