@@ -142,7 +142,6 @@ export default {
     }
     const _this = this
     this.$bus.on('broadCastMarkerEvent', function (equip_uniq_num) {
-      console.log(equip_uniq_num)
       _this.showSpeakerDetail(equip_uniq_num);
     })
   }
