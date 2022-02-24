@@ -5,7 +5,6 @@
 
 <script>
 import L from "leaflet";
-import lodash from "lodash";
 
 export default {
   name: "locator",
@@ -17,6 +16,7 @@ export default {
       token: "pk.eyJ1IjoibWlhb2RheWUiLCJhIjoiY2t6Z25hMnpmM3F3bjJvcHZ0MGtrczlwMSJ9.85LKKEVoAWrXdZXIh9Vfcw",
       imgRedURL: require("../../assets/images/speakerLightRed.png"),
       imgGreenURL: require("../../assets/images/speakerLightGreen.png"), // default
+      rendered: false
     }
   },
   props: ['markerArr', 'iconColor', 'columnName'],
@@ -103,16 +103,14 @@ export default {
               L.DomUtil.removeClass(element, 'leaflet-popup-tip')
             }
           }
+          //初始化的数据
+          _this.$bus.emit('pushSpeakerMsg', equip.equip_uniq_num);
           marker.on('click', () => {
             _this.$bus.emit('pushSpeakerMsg', equip.equip_uniq_num);
             //此id是一个固定常量即可
             let popupDom = L.DomUtil.get("equip_speaker_Id")
-            popupDom.getElementsByTagName('img')[0].setAttribute('src', equip.online_status?this.imgGreenURL:this.imgRedURL)
-
-
+            popupDom.getElementsByTagName('img')[0].setAttribute('src', equip.online_status ? this.imgGreenURL : this.imgRedURL)
             let htmlDiv = popupDom.innerHTML
-            htmlDiv = lodash.replace(htmlDiv, 'id="speakerdetail"', "id='" + equip.equip_uniq_num + "'")
-
             marker.getPopup().setContent(htmlDiv)
             marker.getPopup().getElement().style.opacity = '';
             marker.getPopup().getElement().style.marginTop = '-45px';
@@ -126,11 +124,12 @@ export default {
             // content 外边框置零
             marker.getPopup().getElement().children[0].children[0].style.margin = '0';
             marker.openPopup()
+
+            L.DomEvent.on(marker.getPopup().getElement().children[0].getElementsByTagName('p')[0], 'click', function () {
+              _this.$bus.emit('broadCastMarkerEvent', equip.equip_uniq_num)
+              //消息总线送到兄弟节点
+            }, L.DomEvent.stop)
           })
-          L.DomEvent.addListener(L.DomUtil.get(equip.equip_uniq_num), 'click', function () {
-            _this.$bus.emit('broadCastMarkerEvent', equip.equip_uniq_num)
-            //消息总线送到兄弟节点
-          }, L.DomEvent.stop)
 
           //点击其他区域则关闭窗口
           map.on('click', function () {

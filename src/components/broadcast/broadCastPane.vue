@@ -1,5 +1,5 @@
 <template>
-  <div v-show="showOfSpeakerPane" id="equip_speaker_Id">
+  <div id="equip_speaker_Id">
     <ul style="padding-top: 5px;
         list-style-type: none;
         text-align: left;
@@ -18,9 +18,8 @@
       </li>
       <div style="position: fixed;margin-left: 60px;margin-top: -5px">{{ volume * 100 + '%' }}</div>
       <li>正在播放：&nbsp;{{ name }}</li>
-      <li :style="{color: 'red',marginLeft: playingLeft + 'px'}">{{ name }}</li>
-      <!--   id 不需要多变的id   -->
-      <span style="color: #04c5f6;margin-left: 60px" id="speakerdetail">详情</span>
+      <!--   不需要多变的id   -->
+      <p style="color: #04c5f6;margin-left: 60px">详情</p>
     </ul>
   </div>
 </template>
@@ -49,35 +48,7 @@ export default {
       volume: 0,
     }
   },
-  computed: {
-    playingLeft() {
-      if (!this.showOfSpeakerPane) {
-        return -45;
-      } else {
-        const _this = this;
-        // eslint-disable-next-line vue/no-async-in-computed-properties
-        setTimeout(() => {
-          if (_this.distance >= -45 && this.loop) {
-            if (_this.distance === 35) {
-              this.loop = !this.loop
-            }
-            return _this.distance++
-          }
-          if (_this.distance <= 36 && !this.loop) {
-            if (_this.distance === -44) {
-              this.loop = !this.loop;
-            }
-            return _this.distance--
-          }
-        }, 100)
-      }
-      return this.distance;
-    }
-  },
   methods: {
-    getEnvById() {
-      this.$emit('speakerMarkerEvent', this.speakerId)
-    },
     initSpeakerPane(showOfSpeaker) {
       this.showOfSpeakerPane = showOfSpeaker;
     },
@@ -95,14 +66,17 @@ export default {
       })
     }
   },
-  created() {
+  beforeMount() {
     const _this = this;
     this.$bus.on('pushSpeakerMsg', (equip_uniq_num) => {
         _this.showOfSpeakerPane = true;
         _this.speakerId = equip_uniq_num;
         _this.getSpeakerInfo(_this.speakerId)
+        console.log('收到事件')
     })
-
+  },
+  destroyed() {
+    this.$bus.off('pushSpeakerMsg')
   }
 }
 </script>

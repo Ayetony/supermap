@@ -1,7 +1,7 @@
 <template>
   <div>
     <ParkQuery :pageList="markerArr"
-               @deviceInfo="showDeviceInfo"
+               @deviceInfo="showSpeakerDetail"
                @deviceMarker="showDeviceMarkerLocation"/>
     <BroadCastPopup :markerArr="markerArr"
                     :popupVisibleDeviceId="popupVisibleDeviceId"/>
@@ -9,7 +9,7 @@
              :iconColor="iconColor"
              :markerArr="markerArr"
              @closeSpeakerPane="closeSpeakerPane"/>
-    <BroadCastPane ref="speaker" :markerArr="markerArr" @speakerMarkerEvent="showDeviceInfo"/>
+    <BroadCastPane ref="speaker"  :markerArr="markerArr"/>
 
   </div>
 </template>
@@ -89,7 +89,7 @@ export default {
         this.$refs.speaker.initSpeakerPane(_this.showOfSpeaker);
       })
     },
-    showDeviceInfo(deviceId) {
+    showSpeakerDetail(deviceId) {
       if (!this.$store.state.visible) {
         this.$store.commit("getVisible", true)
       }
@@ -143,7 +143,7 @@ export default {
     const _this = this
     this.$bus.on('broadCastMarkerEvent', function (equip_uniq_num) {
       console.log(equip_uniq_num)
-      _this.showDeviceInfo(equip_uniq_num);
+      _this.showSpeakerDetail(equip_uniq_num);
     })
   }
 }
