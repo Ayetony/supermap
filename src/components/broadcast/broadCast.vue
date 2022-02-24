@@ -42,7 +42,7 @@ export default {
           name: "植物园",
           erectArea: "本层",
           equip_uniq_num: "CP_R_BM003",
-          points: [51.5, -0.09],
+          points: [-3584.083394, 3589.714763],
           online_status: true,
           volume: 0.2,
         },
@@ -50,7 +50,7 @@ export default {
           name: "灵隐寺",
           erectArea: "本层",
           equip_uniq_num: "CP_R_BM002",
-          points: [51.53, -0.19],
+          points: [-4341.123579, 2310.478384],
           online_status: false,
           volume: 0.21,
         },
@@ -58,7 +58,7 @@ export default {
           name: "清波门",
           erectArea: "本层",
           equip_uniq_num: "CP_R_BM004",
-          points: [51.52, -0.14],
+          points: [-4080.075239, 3898.645997],
           online_status: true,
           volume: 0.9
         },
@@ -66,7 +66,7 @@ export default {
           name: "牡丹亭",
           erectArea: "本层",
           equip_uniq_num: "CP_R_BM001",
-          points: [51.52, -0.124],
+          points: [-3262.123774, 4816.737412],
           online_status: false,
           volume: 0.9
 
@@ -75,7 +75,7 @@ export default {
           name: "秋鸣山",
           erectArea: "本层",
           equip_uniq_num: "CP_R_BM005",
-          points: [51.49, -0.06],
+          points: [-4519.506611, 3406.754093],
           online_status: true,
           volume: 0.88
         }

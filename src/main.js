@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex';
 import App from './App.vue'
+import '@supermap/iclient-leaflet/'
 import 'leaflet/dist/leaflet.css'
 import 'element-ui/lib/theme-chalk/index.css'
 import router from './router'

@@ -33,34 +33,34 @@ export default {
           name: "植物园",
           erectArea: "本层",
           equip_uniq_num: "CP_R_BM003",
-          points: [51.5, -0.09],
+          points: [-3222.966523, 1988.32375],
           online_status: true
         },
         {
           name: "野猪林",
           erectArea: "本层",
           equip_uniq_num: "CP_R_BM002",
-          points: [51.53, -0.19],
+          points: [-3095.994378, 4093.623593],
           online_status: false
         },
         {
           name: "快活林",
           erectArea: "本层",
           equip_uniq_num: "CP_R_BM004",
-          points: [51.52, -0.14],
+          points: [-4289.35579, 4676.159877],
           online_status: true
         }, {
           name: "十字坡",
           erectArea: "本层",
           equip_uniq_num: "CP_R_BM001",
-          points: [51.52, -0.124],
+          points: [-3625.636987, 5403.489374],
           online_status: false
         },
         {
           name: "狮子楼",
           erectArea: "本层",
           equip_uniq_num: "CP_R_BM005",
-          points: [51.49, -0.06],
+          points: [-3995.455468, 6356.389942],
           online_status: true
         }
       ],

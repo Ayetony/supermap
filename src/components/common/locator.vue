@@ -5,6 +5,8 @@
 
 <script>
 import L from "leaflet";
+import {tiledMapLayer} from '@supermap/iclient-leaflet';
+
 export default {
   name: "locator",
   data() {
@@ -22,15 +24,26 @@ export default {
   methods: {
     leafletInit() {
       // 定位
-      let map = L.map('map').setView([51.505, -0.09], 13);
-      L.tileLayer(this.videoUrl, {
-        attribution: this.attribution,
+      // let map = L.map('map').setView([51.505, -0.09], 13);
+      // L.tileLayer(this.videoUrl, {
+      //   attribution: this.attribution,
+      //   maxZoom: 18,
+      //   id: 'mapbox/streets-v11',
+      //   tileSize: 512,
+      //   zoomOffset: -1,
+      //   accessToken: this.token
+      // }).addTo(map);
+      let map = L.map('map', {
+        crs: L.CRS.NonEarthCRS({
+          bounds: L.bounds([48.4, -7668.25],[8958.85, -55.58]),
+          origin: L.point(48.4,-55.58)
+        }),
+        center: [ -3861.91,4503.62],
         maxZoom: 18,
-        id: 'mapbox/streets-v11',
-        tileSize: 512,
-        zoomOffset: -1,
-        accessToken: this.token
-      }).addTo(map);
+        zoom: 2.5
+      });
+      const url = 'http://192.168.124.253:8090/iserver/services/map-changchun/rest/maps/%E9%95%BF%E6%98%A5%E5%B8%82%E5%8C%BA%E5%9B%BE';
+      tiledMapLayer(url).addTo(map);
       map.doubleClickZoom.disable();//禁止双击zoom
       const _this = this
       //遍历绑定定位点的marker事件
@@ -146,9 +159,10 @@ export default {
           })
         }
       })
+      this.travelBounds(map)
       return map
     },
-    //巡游取点
+    //巡游取点，动态取点
     travelBounds(map) {
       const popup = L.popup();
 
@@ -183,7 +197,7 @@ export default {
       }
 
       if (this.columnName === 'broadCastClear') {
-        let myIcon = L.icon({
+        return L.icon({
           iconUrl: equip.online_status ? require('../../assets/images/speakerGreen.png') : require('../../assets/images/speakerRed.png'),
           iconSize: [45, 45],
           iconAnchor: [22, 94],
@@ -191,7 +205,6 @@ export default {
           shadowSize: [68, 95],
           shadowAnchor: [22, 94],
         });
-        return myIcon;
       }
 
       if (this.columnName === 'videoClear') {

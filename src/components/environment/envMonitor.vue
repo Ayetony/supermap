@@ -44,7 +44,7 @@ export default {
           name: "env-植物园",
           erectArea: "本层",
           equip_uniq_num: "CP_R_BM003",
-          points: [51.5, -0.09],
+          points: [-2731.325483, 4050.936042],
           online_status: true,
           env: {
             pm25: '23',
@@ -95,7 +95,7 @@ export default {
           name: "env-野猪林",
           erectArea: "本层",
           equip_uniq_num: "CP_R_BM002",
-          points: [51.5, -0.19],
+          points: [-3736.361592, 4268.49325],
           online_status: false,
           env: {
             pm25: '23',
@@ -147,7 +147,7 @@ export default {
           name: "env-快活林",
           erectArea: "本层",
           equip_uniq_num: "CP_R_BM004",
-          points: [51.50, -0.14],
+          points: [-3897.341401, 3285.134672],
           online_status: true,
           env: {
             pm25: '23',
@@ -198,7 +198,7 @@ export default {
           name: "env-十字坡",
           erectArea: "本层",
           equip_uniq_num: "CP_R_BM001",
-          points: [51.52, -0.124],
+          points: [-4432.490498, 2523.684447],
           online_status: false,
           env: {
             pm25: '23',
@@ -250,7 +250,7 @@ export default {
           name: "env-狮子楼",
           erectArea: "本层",
           equip_uniq_num: "CP_R_BM005",
-          points: [51.49, -0.06],
+          points: [-5227.056382, 4618.631972],
           online_status: true,
           env: {
             pm25: '23',
