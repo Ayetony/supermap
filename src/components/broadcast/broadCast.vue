@@ -9,7 +9,7 @@
              :iconColor="iconColor"
              :markerArr="markerArr"
              @closeSpeakerPane="closeSpeakerPane"/>
-    <BroadCastPane ref="speaker"  :markerArr="markerArr"/>
+    <BroadCastPane @deviceInfo="showSpeakerDetail" ref="speaker"  :markerArr="markerArr"/>
 
   </div>
 </template>
@@ -140,10 +140,14 @@ export default {
     if (this.$store.state.clearMap.envClear) {
       this.$store.commit('getBroadCastClear', false)
     }
+    // 理论上可以直接自定义事件
     const _this = this
     this.$bus.on('broadCastMarkerEvent', function (equip_uniq_num) {
       _this.showSpeakerDetail(equip_uniq_num);
     })
+  },
+  beforeDestroy() {
+    this.$bus.off('broadCastMarkerEvent')
   }
 }
 </script>

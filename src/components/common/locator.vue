@@ -5,7 +5,6 @@
 
 <script>
 import L from "leaflet";
-
 export default {
   name: "locator",
   data() {
@@ -15,8 +14,8 @@ export default {
       videoUrl: 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}',
       token: "pk.eyJ1IjoibWlhb2RheWUiLCJhIjoiY2t6Z25hMnpmM3F3bjJvcHZ0MGtrczlwMSJ9.85LKKEVoAWrXdZXIh9Vfcw",
       imgRedURL: require("../../assets/images/speakerLightRed.png"),
-      imgGreenURL: require("../../assets/images/speakerLightGreen.png"), // default
-      rendered: false
+      imgGreenURL: require("../../assets/images/speakerLightGreen.png"),
+      updatedDomEventCompiledHtml: ''
     }
   },
   props: ['markerArr', 'iconColor', 'columnName'],
@@ -103,32 +102,34 @@ export default {
               L.DomUtil.removeClass(element, 'leaflet-popup-tip')
             }
           }
-          //初始化的数据
-          _this.$bus.emit('pushSpeakerMsg', equip.equip_uniq_num);
           marker.on('click', () => {
             _this.$bus.emit('pushSpeakerMsg', equip.equip_uniq_num);
-            //此id是一个固定常量即可
-            let popupDom = L.DomUtil.get("equip_speaker_Id")
-            popupDom.getElementsByTagName('img')[0].setAttribute('src', equip.online_status ? this.imgGreenURL : this.imgRedURL)
-            let htmlDiv = popupDom.innerHTML
-            marker.getPopup().setContent(htmlDiv)
-            marker.getPopup().getElement().style.opacity = '';
-            marker.getPopup().getElement().style.marginTop = '-45px';
-            // 修改popup默认样式
-            marker.getPopup().getElement().children[0].style.padding = '0';
-            marker.getPopup().getElement().children[0].style.border = '0';
-            marker.getPopup().getElement().children[0].style.width = '110';
-            marker.getPopup().getElement().children[0].style.background = '#1c1717';
-            marker.getPopup().getElement().children[0].style.opacity = '0.8';
-            marker.getPopup().getElement().children[0].style.color = 'white';
-            // content 外边框置零
-            marker.getPopup().getElement().children[0].children[0].style.margin = '0';
-            marker.openPopup()
-
-            L.DomEvent.on(marker.getPopup().getElement().children[0].getElementsByTagName('p')[0], 'click', function () {
-              _this.$bus.emit('broadCastMarkerEvent', equip.equip_uniq_num)
-              //消息总线送到兄弟节点
-            }, L.DomEvent.stop)
+            // dom还未更新完毕，需要下一次微任务执行即可获取到实际id
+            _this.$nextTick(()=>{
+              let popupDom = L.DomUtil.get(equip.equip_uniq_num +"speaker-pane")
+              // popupDom.getElementsByTagName('img')[0].setAttribute('src', equip.online_status ? this.imgGreenURL : this.imgRedURL)
+              const htmlDiv = popupDom.innerHTML
+              marker.getPopup().setContent(htmlDiv)
+              marker.getPopup().update()
+              marker.getPopup().getElement().style.opacity = '';
+              marker.getPopup().getElement().style.marginTop = '-45px';
+              // 修改popup默认样式
+              marker.getPopup().getElement().children[0].style.padding = '0';
+              marker.getPopup().getElement().children[0].style.border = '0';
+              marker.getPopup().getElement().children[0].style.width = '110';
+              marker.getPopup().getElement().children[0].style.background = '#1c1717';
+              marker.getPopup().getElement().children[0].style.opacity = '0.8';
+              marker.getPopup().getElement().children[0].style.color = 'white';
+              // content 外边框置零 open popup
+              marker.getPopup().getElement().children[0].children[0].style.margin = '0';
+              marker.openPopup()
+              let domDetail =  marker.getPopup().getElement().children[0].getElementsByTagName('p')[0];
+              if(domDetail){
+                L.DomEvent.on(domDetail, 'click', function () {
+                  _this.$bus.emit('broadCastMarkerEvent', equip.equip_uniq_num)
+                }, L.DomEvent.stop)
+              }
+            })
           })
 
           //点击其他区域则关闭窗口

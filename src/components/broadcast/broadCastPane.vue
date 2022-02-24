@@ -1,5 +1,5 @@
 <template>
-  <div id="equip_speaker_Id">
+  <div :id="speakerId + 'speaker-pane'">
     <ul style="padding-top: 5px;
         list-style-type: none;
         text-align: left;
@@ -13,7 +13,7 @@
       <img :src="imgURL"/>
       <li>音量</li>
       <li style="  padding: 0;width: 100%;height: 5px;margin-left: -35px;background-color: #15d81d;">
-        <div :style="{width:(1-this.volume)*100 + '%'}"
+        <div :style="{width:(1-volume)*100 + '%'}"
              style="  padding: 0;float: right;background: #EBEEF5;height: 5px;"></div>
       </li>
       <div style="position: fixed;margin-left: 60px;margin-top: -5px">{{ volume * 100 + '%' }}</div>
@@ -37,10 +37,8 @@ export default {
   data() {
     return {
       loop: true,
-      distance: -45,
       showOfSpeakerPane: false,
       speakerId: '',
-      percentage: '90px',
       imgURL: '',
       imgRedURL: require("../../assets/images/speakerLightRed.png"),
       imgGreenURL: require("../../assets/images/speakerLightGreen.png"), // default
@@ -66,17 +64,16 @@ export default {
       })
     }
   },
-  beforeMount() {
+  mounted() {
     const _this = this;
     this.$bus.on('pushSpeakerMsg', (equip_uniq_num) => {
-        _this.showOfSpeakerPane = true;
-        _this.speakerId = equip_uniq_num;
-        _this.getSpeakerInfo(_this.speakerId)
-        console.log('收到事件')
+      _this.showOfSpeakerPane = true;
+      _this.speakerId = equip_uniq_num;
+      _this.getSpeakerInfo(_this.speakerId)
     })
   },
-  destroyed() {
-    this.$bus.off('pushSpeakerMsg')
+  beforeDestroy() {
+    this.$bus.off('pushSpeakerMsg');
   }
 }
 </script>
