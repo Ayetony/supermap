@@ -159,7 +159,7 @@ export default {
           })
         }
       })
-      this.travelBounds(map)
+      // this.travelBounds(map)
       return map
     },
     //巡游取点，动态取点
